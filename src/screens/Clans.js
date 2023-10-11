@@ -1,10 +1,10 @@
 import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
 
-export default function Router() {
+export default function Clans() {
   return (
     <View>
-      <Text>Router</Text>
+      <Text>Clans</Text>
     </View>
   )
 }

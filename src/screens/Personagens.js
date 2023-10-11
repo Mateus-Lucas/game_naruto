@@ -3,7 +3,7 @@ import { FlatList, StyleSheet, Text, View } from 'react-native';
 import { Card } from 'react-native-paper';
 import Api from '../services/Api';
 
-export default function Home() {
+export default function Personagens() {
   return (
     <FlatList
       data={Api}

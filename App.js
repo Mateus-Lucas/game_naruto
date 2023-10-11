@@ -1,9 +1,10 @@
-import { StatusBar } from 'expo-status-bar';
-import { StyleSheet, Text, View } from 'react-native';
-import Home from './src/screens/Home';
+import { PaperProvider } from "react-native-paper";
+import Routes from "./src/routes/Routes";
 
 export default function App() {
   return (
-      <Home/>
+    <PaperProvider>
+      <Routes/>
+    </PaperProvider>
   );
 }
