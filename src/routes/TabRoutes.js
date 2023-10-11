@@ -19,7 +19,7 @@ export default function TabRoutes() {
                 name='Personagens'
                 component={Personagens}
                 options={{
-                    tabBarLabel: 'Usuários',
+                    tabBarLabel: 'Personagens',
                     tabBarIcon: ({ color, size }) => {
                         return <Ionicons name='people-outline' color={color} size={size} />
                     }
@@ -41,7 +41,7 @@ export default function TabRoutes() {
                 name='Jogo'
                 component={Jogo}
                 options={{
-                    tabBarLabel: 'Citações',
+                    tabBarLabel: 'Jogo',
                     tabBarIcon: ({ color, size }) => {
                         return <Ionicons name='book-outline' color={color} size={size} />
                     }
