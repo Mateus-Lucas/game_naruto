@@ -1,9 +1,16 @@
 import React from 'react';
-import { FlatList, StyleSheet, Text, View } from 'react-native';
+import { FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Card } from 'react-native-paper';
 import Api from '../services/Api';
+import { useNavigation } from '@react-navigation/native';
 
 export default function Personagens() {
+  const navigation = useNavigation();
+
+  const handleSelectCharacter = (selectedCharacter) => {
+    navigation.navigate('Jogo', { ids: [selectedCharacter.id] }); 
+  };
+
   return (
     <FlatList
       data={Api}
@@ -21,6 +28,11 @@ export default function Personagens() {
             <Text style={styles.cardDescription}>
               Patente: {item.patente}
             </Text>
+            <Button
+              mode="contained"
+              title="Selecionar"
+              onPress={() => handleSelectCharacter(item)}
+            />
           </Card.Content>
         </Card>
       )}
