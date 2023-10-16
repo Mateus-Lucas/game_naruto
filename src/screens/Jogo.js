@@ -10,7 +10,7 @@ export default function Jogo() {
   console.log(ids);
 
   const [selectedCharacters, setSelectedCharacters] = useState([]);
-  const [isChoosingCharacter, setIsChoosingCharacter] = useState(false); // State para controlar a exibição do modal
+  const [isChoosingCharacter, setIsChoosingCharacter] = useState(false);
 
   useEffect(() => {
     const filteredCharacters = Api.filter((character) => ids.includes(character.id));
@@ -22,9 +22,8 @@ export default function Jogo() {
   };
 
   const handleCharacterSelection = (character) => {
-    // Lógica para adicionar o personagem selecionado à lista de personagens
     setSelectedCharacters([...selectedCharacters, character]);
-    setIsChoosingCharacter(false); // Fechar o modal
+    setIsChoosingCharacter(false); 
   };
 
   return (
@@ -36,26 +35,44 @@ export default function Jogo() {
         renderItem={({ item }) => (
           <View style={styles.characterCardContainer}>
             <Card style={styles.card}>
-              <Card.Cover source={{ uri: item.imagem }} />
-              <Card.Content>
+              <Card style={styles.cardImagem}>
                 <Title style={styles.characterName}>{item.nome}</Title>
-                <Paragraph>Ataque: {item.ataque}</Paragraph>
-                <Paragraph>Defesa: {item.defesa}</Paragraph>
-                <Paragraph>Clã: {item.clã}</Paragraph>
-                <Paragraph>Patente: {item.patente}</Paragraph>
-              </Card.Content>
+                <Card.Cover
+                  source={{ uri: item.imagem }}
+                  style={styles.image}
+                />
+              </Card>
+              <Paragraph>
+                <Text style={{ fontWeight: 'bold' }}>Patente: </Text>
+                {item.patente}
+              </Paragraph>
+              <Paragraph>
+                <Text style={{ fontWeight: 'bold' }}>Jutso Especial: </Text>
+                {item.jutsu_especial}
+              </Paragraph>
+                <Card  style={styles.cardAtributos}>
+                  <Paragraph style={styles.textCard}>
+                    <Text style={styles.textStyle}>Ataque: ................. </Text>
+                    <Text style={styles.atributosStyle}>{item.ataque}</Text>
+                  </Paragraph>
+                  <Paragraph style={styles.textCard}>
+                    <Text style={styles.textStyle}>Defesa: ................. </Text>
+                    <Text style={styles.atributosStyle}>{item.defesa}</Text>
+                  </Paragraph>
+                  <Paragraph style={styles.textCard}>
+                    <Text style={styles.textStyle}>Especial: ............... </Text>
+                    <Text style={styles.atributosStyle}>{item.dano_especial}</Text>
+                  </Paragraph>
+                </Card>
             </Card>
           </View>
-        )}
+        )
+        }
       />
-
-
-      <Button
+      < Button
         title="Escolher Personagem"
         onPress={handleChooseCharacter}
       />
-
-      {/* Modal para escolher personagem */}
       <Modal
         visible={isChoosingCharacter}
         animationType="slide"
@@ -76,20 +93,16 @@ export default function Jogo() {
           </View>
         </View>
       </Modal>
-    </View>
+    </View >
   );
 }
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: 'white',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
-  characterList: {
-    // Estilos da lista de personagens
-  },
-  // Outros estilos
-
   modalContainer: {
     flex: 1,
     justifyContent: 'center',
@@ -102,4 +115,43 @@ const styles = StyleSheet.create({
     padding: 16,
     borderRadius: 8,
   },
+  card: {
+    borderWidth: 8,
+    borderColor: 'white',
+    padding: 8,
+    width: 220,
+    backgroundColor: '#800000'
+  },
+  cardImagem: {
+    borderBottomLeftRadius: 0,
+    borderBottomRightRadius: 0,
+    backgroundColor: '#600000',
+    marginBottom: 5
+  },
+  textStyle: {
+    fontWeight: 'bold',
+    color: 'black'
+  },
+  cardAtributos: {
+    backgroundColor: 'white',
+    padding: 7,
+    borderTopLeftRadius: 0,
+    borderTopRightRadius: 0,
+    marginTop: 5
+  },
+  textCard: {
+    justifyContent: 'space-between',
+    backgroundColor: 'gray',
+    color: 'black',
+    padding: 3,
+    borderTopRightRadius: 10,
+    borderBottomLeftRadius: 10
+  },
+  image: {
+    borderRadius: 0,
+    height: 130
+  },
+  characterName: {
+    margin: 5
+  }
 });
