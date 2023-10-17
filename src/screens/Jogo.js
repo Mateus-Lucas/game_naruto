@@ -5,9 +5,11 @@ import { useRoute } from '@react-navigation/native';
 import Api from '../services/Api';
 
 
-import aguaImage from '../img/agua';
-import ventoImage from './img/vento';
-import fogoImage from './img/fogo.png';
+import aguaImage from '../img/agua.png';
+import ventoImage from '../img/vento.png';
+import fogoImage from '../img/fogo.png';
+import relampagoImage from '../img/relampago.png';
+import terraImage from '../img/terra.png';
 
 export default function Jogo() {
   const route = useRoute();
@@ -31,8 +33,12 @@ export default function Jogo() {
         return ventoImage;
       case 'Fogo':
         return fogoImage;
+      case 'Relâmpago':
+        return relampagoImage;
+      case 'Terra':
+        return terraImage;
       default:
-        return null; // Retorne uma imagem padrão se a natureza de chacra for desconhecida
+        return null;
     }
   };
 
@@ -60,9 +66,15 @@ export default function Jogo() {
                   source={{ uri: item.imagem }}
                   style={styles.image}
                 />
+                <View style={{ position: 'relative' }}>
+                  <Image
+                    source={getChacraImage(item.natureza_de_chacra)}
+                    style={styles.imageNat}
+                  />
+                </View>
               </Card>
               <Paragraph>
-                <Text style={{ fontWeight: 'bold' }}>Patente: </Text>
+                <Text style={{ fontWeight: 'bold', }}>Patente: </Text>
                 {item.patente}
               </Paragraph>
               <Paragraph>
@@ -83,11 +95,6 @@ export default function Jogo() {
                   <Text style={styles.atributosStyle}>{item.dano_especial}</Text>
                 </Paragraph>
               </Card>
-              {/* Renderize a imagem com base na natureza de chacra */}
-              <Image
-                source={getChacraImage(item.natureza_de_chacra)}
-                style={{ width: 50, height: 50 }}
-              />
             </Card>
           </View>
         )}
@@ -144,13 +151,22 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     padding: 8,
     width: 220,
-    backgroundColor: '#800000'
+    backgroundColor: '#800000',
   },
   cardImagem: {
     borderBottomLeftRadius: 0,
     borderBottomRightRadius: 0,
     backgroundColor: '#600000',
-    marginBottom: 5
+    marginBottom: 15,
+    borderWidth: 2
+  },
+  imageNat: {
+    width: 35,
+    height: 35,
+    margin: 5,
+    position: 'absolute',
+    top: -23,
+    left: 70,
   },
   textStyle: {
     fontWeight: 'bold',
