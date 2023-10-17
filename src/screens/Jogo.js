@@ -1,8 +1,13 @@
 import React, { useState, useEffect } from 'react';
-import { View, StyleSheet, FlatList, Button, Modal, Text, TouchableOpacity } from 'react-native';
+import { View, StyleSheet, FlatList, Button, Modal, Text, TouchableOpacity, Image } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import Api from '../services/Api';
+
+
+import aguaImage from '../img/agua';
+import ventoImage from './img/vento';
+import fogoImage from './img/fogo.png';
 
 export default function Jogo() {
   const route = useRoute();
@@ -17,13 +22,27 @@ export default function Jogo() {
     setSelectedCharacters(filteredCharacters);
   }, [ids]);
 
+  // Função para determinar a imagem com base na natureza de chacra
+  const getChacraImage = (naturezaDeChacra) => {
+    switch (naturezaDeChacra) {
+      case 'Água':
+        return aguaImage;
+      case 'Vento':
+        return ventoImage;
+      case 'Fogo':
+        return fogoImage;
+      default:
+        return null; // Retorne uma imagem padrão se a natureza de chacra for desconhecida
+    }
+  };
+
   const handleChooseCharacter = () => {
     setIsChoosingCharacter(true);
   };
 
   const handleCharacterSelection = (character) => {
     setSelectedCharacters([...selectedCharacters, character]);
-    setIsChoosingCharacter(false); 
+    setIsChoosingCharacter(false);
   };
 
   return (
@@ -47,29 +66,33 @@ export default function Jogo() {
                 {item.patente}
               </Paragraph>
               <Paragraph>
-                <Text style={{ fontWeight: 'bold' }}>Jutso Especial: </Text>
+                <Text style={{ fontWeight: 'bold' }}>Jutsu Especial: </Text>
                 {item.jutsu_especial}
               </Paragraph>
-                <Card  style={styles.cardAtributos}>
-                  <Paragraph style={styles.textCard}>
-                    <Text style={styles.textStyle}>Ataque: ................. </Text>
-                    <Text style={styles.atributosStyle}>{item.ataque}</Text>
-                  </Paragraph>
-                  <Paragraph style={styles.textCard}>
-                    <Text style={styles.textStyle}>Defesa: ................. </Text>
-                    <Text style={styles.atributosStyle}>{item.defesa}</Text>
-                  </Paragraph>
-                  <Paragraph style={styles.textCard}>
-                    <Text style={styles.textStyle}>Especial: ............... </Text>
-                    <Text style={styles.atributosStyle}>{item.dano_especial}</Text>
-                  </Paragraph>
-                </Card>
+              <Card style={styles.cardAtributos}>
+                <Paragraph style={styles.textCard}>
+                  <Text style={styles.textStyle}>Ataque: ................. </Text>
+                  <Text style={styles.atributosStyle}>{item.ataque}</Text>
+                </Paragraph>
+                <Paragraph style={styles.textCard}>
+                  <Text style={styles.textStyle}>Defesa: ................. </Text>
+                  <Text style={styles.atributosStyle}>{item.defesa}</Text>
+                </Paragraph>
+                <Paragraph style={styles.textCard}>
+                  <Text style={styles.textStyle}>Especial: ............... </Text>
+                  <Text style={styles.atributosStyle}>{item.dano_especial}</Text>
+                </Paragraph>
+              </Card>
+              {/* Renderize a imagem com base na natureza de chacra */}
+              <Image
+                source={getChacraImage(item.natureza_de_chacra)}
+                style={{ width: 50, height: 50 }}
+              />
             </Card>
           </View>
-        )
-        }
+        )}
       />
-      < Button
+      <Button
         title="Escolher Personagem"
         onPress={handleChooseCharacter}
       />
@@ -93,9 +116,10 @@ export default function Jogo() {
           </View>
         </View>
       </Modal>
-    </View >
+    </View>
   );
 }
+
 
 const styles = StyleSheet.create({
   container: {
