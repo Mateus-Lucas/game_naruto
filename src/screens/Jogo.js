@@ -13,7 +13,6 @@ import terraImage from '../img/terra.png';
 export default function Jogo() {
   const route = useRoute();
   const { ids } = route.params;
-  console.log(ids);
 
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [isChoosingCharacter, setIsChoosingCharacter] = useState(false);
@@ -110,11 +109,11 @@ export default function Jogo() {
                 </View>
               </Card>
               <Paragraph>
-                <Text style={{ fontWeight: 'bold' }}>Patente: </Text>
+                <Text style={{ fontWeight: 'bold', }}>Patente: </Text>
                 {item.patente}
               </Paragraph>
-              <Paragraph>
-                <Text style={{ fontWeight: 'bold' }}>Jutsu Especial: </Text>
+              <Paragraph  style={{ fontWeight: 'bold', color: 'white'}}>
+                <Text >Jutsu Especial: </Text>
                 {item.jutsu_especial}
               </Paragraph>
               <Card style={styles.cardAtributos}>
@@ -178,7 +177,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-    backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     width: '80%',
@@ -188,7 +186,7 @@ const styles = StyleSheet.create({
   },
   card: {
     borderWidth: 8,
-    borderColor: 'white',
+    borderColor: 'black',
     padding: 8,
     width: 220,
     backgroundColor: '#800000',
@@ -210,19 +208,19 @@ const styles = StyleSheet.create({
   },
   textStyle: {
     fontWeight: 'bold',
-    color: 'black'
+    color: 'white'
   },
   cardAtributos: {
-    backgroundColor: 'white',
+    backgroundColor: 'black',
     padding: 7,
     borderTopLeftRadius: 0,
     borderTopRightRadius: 0,
-    marginTop: 5
+    marginTop: 5,
   },
   textCard: {
     justifyContent: 'space-between',
     backgroundColor: 'gray',
-    color: 'black',
+    color: 'white',
     padding: 3,
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10
@@ -232,7 +230,8 @@ const styles = StyleSheet.create({
     height: 130
   },
   characterName: {
-    margin: 5
+    margin: 5,
+    color: 'white'
   }
 });
 
