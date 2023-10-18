@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { View, StyleSheet, FlatList, Button, Modal, Text, TouchableOpacity, Image } from 'react-native';
-import { Card, Title, Paragraph } from 'react-native-paper';
+import { Card, Title, Paragraph, ProgressBar } from 'react-native-paper'; // Importe o ProgressBar do react-native-paper
 import { useRoute } from '@react-navigation/native';
 import Api from '../services/Api';
 
@@ -16,13 +16,30 @@ export default function Jogo() {
 
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [isChoosingCharacter, setIsChoosingCharacter] = useState(false);
-  const [teamA, setTeamA] = useState([]);
-  const [teamB, setTeamB] = useState([]);
+
+  const [characterLives, setCharacterLives] = useState({});
+  const vidaFixa = 25000;
 
   useEffect(() => {
     const filteredCharacters = Api.filter((character) => ids.includes(character.id));
     setSelectedCharacters(filteredCharacters);
+
+    const initialLives = {};
+    filteredCharacters.forEach((character) => {
+      initialLives[character.id] = vidaFixa;
+    });
+    setCharacterLives(initialLives);
   }, [ids]);
+
+  const handleAttack = (atacante) => {
+    const defensor = selectedCharacters[0];
+    const dano = atacante.ataque;
+    const novaVida = characterLives[defensor.id] - dano;
+    setCharacterLives({
+      ...characterLives,
+      [defensor.id]: novaVida,
+    });
+  };
 
   const getChacraImage = (naturezaDeChacra) => {
     switch (naturezaDeChacra) {
@@ -46,47 +63,12 @@ export default function Jogo() {
   };
 
   const handleCharacterSelection = (character) => {
-    if (teamA.length < 3) {
-      setTeamA([...teamA, character]);
-    } else if (teamB.length < 3) {
-      setTeamB([...teamB, character]);
-    }
+    setSelectedCharacters([...selectedCharacters, character]);
     setIsChoosingCharacter(false);
-  };
-  
-  const simulateAttack = (attacker, defender) => {
-    const attackerRoll = Math.floor(Math.random() * 20) + 1;
-    const defenderRoll = Math.floor(Math.random() * 20) + 1;
-
-    if (attackerRoll > defenderRoll) {
-      const damage = Math.floor(Math.random() * attacker.ataque);
-      defender.defesa -= damage;
-    } else {
-    }
   };
 
   return (
     <View style={styles.container}>
-      <View style={styles.teamContainer}>
-        <Text>Time A:</Text>
-        <FlatList
-          data={teamA}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Text>{item.nome}</Text>
-          )}
-        />
-      </View>
-      <View style={styles.teamContainer}>
-        <Text>Time B:</Text>
-        <FlatList
-          data={teamB}
-          keyExtractor={(item) => item.id.toString()}
-          renderItem={({ item }) => (
-            <Text>{item.nome}</Text>
-          )}
-        />
-      </View>
       <FlatList
         data={selectedCharacters}
         keyExtractor={(item) => item.id.toString()}
@@ -107,11 +89,11 @@ export default function Jogo() {
                   />
                 </View>
               </Card>
-              <Paragraph>
-                <Text style={{ fontWeight: 'bold', }}>Patente: </Text>
+              <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                <Text>Patente: </Text>
                 {item.patente}
               </Paragraph>
-              <Paragraph  style={{ fontWeight: 'bold', color: 'white'}}>
+              <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
                 <Text >Jutsu Especial: </Text>
                 {item.jutsu_especial}
               </Paragraph>
@@ -129,7 +111,19 @@ export default function Jogo() {
                   <Text style={styles.atributosStyle}>{item.dano_especial}</Text>
                 </Paragraph>
               </Card>
+              <Button
+                title="Atacar"
+                onPress={() => handleAttack(item)}
+              />
             </Card>
+            <Text style={styles.atributosStyle}>
+              {characterLives[item.id]}
+            </Text>
+            <ProgressBar
+              progress={characterLives[item.id] / vidaFixa} 
+              color={'blue'} 
+              style={{height: 15}}
+            />
           </View>
         )}
       />
@@ -146,7 +140,7 @@ export default function Jogo() {
           <View style={styles.modalContent}>
             <Text>Escolha um novo personagem:</Text>
             <FlatList
-              data={selectedCharacters}
+              data={Api}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handleCharacterSelection(item)}>
@@ -166,11 +160,6 @@ const styles = StyleSheet.create({
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  teamContainer: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    margin: 10,
   },
   modalContainer: {
     flex: 1,
@@ -222,7 +211,7 @@ const styles = StyleSheet.create({
     color: 'white',
     padding: 3,
     borderTopRightRadius: 10,
-    borderBottomLeftRadius: 10
+    borderBottomLeftRadius: 10,
   },
   image: {
     borderRadius: 0,
@@ -231,7 +220,5 @@ const styles = StyleSheet.create({
   characterName: {
     margin: 5,
     color: 'white'
-  }
+  },
 });
-
-
