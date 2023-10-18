@@ -53,7 +53,7 @@ export default function Jogo() {
     }
     setIsChoosingCharacter(false);
   };
-
+  
   const simulateAttack = (attacker, defender) => {
     const attackerRoll = Math.floor(Math.random() * 20) + 1;
     const defenderRoll = Math.floor(Math.random() * 20) + 1;
@@ -62,7 +62,6 @@ export default function Jogo() {
       const damage = Math.floor(Math.random() * attacker.ataque);
       defender.defesa -= damage;
     } else {
-      // Ataque falhou
     }
   };
 

@@ -12,7 +12,7 @@ export default function TabRoutes() {
         <NavigationContainer>
 
             <Tab.Navigator
-                initialRouteName='Personagens'
+                initialRouteName='Aldeias'
                 screenOptions={{
                     headerShown: false
                 }}
