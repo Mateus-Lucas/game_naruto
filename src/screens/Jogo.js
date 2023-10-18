@@ -4,7 +4,6 @@ import { Card, Title, Paragraph } from 'react-native-paper';
 import { useRoute } from '@react-navigation/native';
 import Api from '../services/Api';
 
-
 import aguaImage from '../img/agua.png';
 import ventoImage from '../img/vento.png';
 import fogoImage from '../img/fogo.png';
@@ -18,13 +17,14 @@ export default function Jogo() {
 
   const [selectedCharacters, setSelectedCharacters] = useState([]);
   const [isChoosingCharacter, setIsChoosingCharacter] = useState(false);
+  const [teamA, setTeamA] = useState([]);
+  const [teamB, setTeamB] = useState([]);
 
   useEffect(() => {
     const filteredCharacters = Api.filter((character) => ids.includes(character.id));
     setSelectedCharacters(filteredCharacters);
   }, [ids]);
 
-  // Função para determinar a imagem com base na natureza de chacra
   const getChacraImage = (naturezaDeChacra) => {
     switch (naturezaDeChacra) {
       case 'Água':
@@ -47,12 +47,48 @@ export default function Jogo() {
   };
 
   const handleCharacterSelection = (character) => {
-    setSelectedCharacters([...selectedCharacters, character]);
+    if (teamA.length < 3) {
+      setTeamA([...teamA, character]);
+    } else if (teamB.length < 3) {
+      setTeamB([...teamB, character]);
+    }
     setIsChoosingCharacter(false);
+  };
+
+  const simulateAttack = (attacker, defender) => {
+    const attackerRoll = Math.floor(Math.random() * 20) + 1;
+    const defenderRoll = Math.floor(Math.random() * 20) + 1;
+
+    if (attackerRoll > defenderRoll) {
+      const damage = Math.floor(Math.random() * attacker.ataque);
+      defender.defesa -= damage;
+    } else {
+      // Ataque falhou
+    }
   };
 
   return (
     <View style={styles.container}>
+      <View style={styles.teamContainer}>
+        <Text>Time A:</Text>
+        <FlatList
+          data={teamA}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Text>{item.nome}</Text>
+          )}
+        />
+      </View>
+      <View style={styles.teamContainer}>
+        <Text>Time B:</Text>
+        <FlatList
+          data={teamB}
+          keyExtractor={(item) => item.id.toString()}
+          renderItem={({ item }) => (
+            <Text>{item.nome}</Text>
+          )}
+        />
+      </View>
       <FlatList
         data={selectedCharacters}
         keyExtractor={(item) => item.id.toString()}
@@ -74,7 +110,7 @@ export default function Jogo() {
                 </View>
               </Card>
               <Paragraph>
-                <Text style={{ fontWeight: 'bold', }}>Patente: </Text>
+                <Text style={{ fontWeight: 'bold' }}>Patente: </Text>
                 {item.patente}
               </Paragraph>
               <Paragraph>
@@ -112,7 +148,7 @@ export default function Jogo() {
           <View style={styles.modalContent}>
             <Text>Escolha um novo personagem:</Text>
             <FlatList
-              data={Api}
+              data={selectedCharacters}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
                 <TouchableOpacity onPress={() => handleCharacterSelection(item)}>
@@ -127,12 +163,16 @@ export default function Jogo() {
   );
 }
 
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
+  },
+  teamContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    margin: 10,
   },
   modalContainer: {
     flex: 1,
@@ -195,3 +235,5 @@ const styles = StyleSheet.create({
     margin: 5
   }
 });
+
+

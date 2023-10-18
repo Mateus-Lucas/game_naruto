@@ -12,7 +12,7 @@ export default function TabRoutes() {
         <NavigationContainer>
 
             <Tab.Navigator
-                initialRouteName='Clans'
+                initialRouteName='Personagens'
                 screenOptions={{
                     headerShown: false
                 }}
