@@ -3,7 +3,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Personagens from '../screens/Personagens';
 import Jogo from '../screens/Jogo';
-import Clans from '../screens/Clans';
+import Aldeias from '../screens/Aldeias';
 
 const Tab = createBottomTabNavigator();
 
@@ -12,7 +12,7 @@ export default function TabRoutes() {
         <NavigationContainer>
 
             <Tab.Navigator
-                initialRouteName='Clans'
+                initialRouteName='Aldeias'
                 screenOptions={{
                     headerShown: false
                 }}
@@ -30,12 +30,12 @@ export default function TabRoutes() {
                 />
 
                 <Tab.Screen
-                    name='Clans'
-                    component={Clans}
+                    name='Aldeias'
+                    component={Aldeias}
                     options={{
-                        tabBarLabel: 'Clans',
+                        tabBarLabel: 'Aldeias',
                         tabBarIcon: ({ color, size }) => {
-                            return <Ionicons name='newspaper-outline' color={color} size={size} />
+                            return <Ionicons name='globe-outline' color={color} size={size} />
                         }
                     }}
                 />
@@ -46,7 +46,7 @@ export default function TabRoutes() {
                     options={{
                         tabBarLabel: 'Jogo',
                         tabBarIcon: ({ color, size }) => {
-                            return <Ionicons name='book-outline' color={color} size={size} />
+                            return <Ionicons name='game-controller-outline' color={color} size={size} />
                         }
                     }}
                 />
