@@ -2,6 +2,8 @@ import React, { useEffect, useState } from 'react';
 import { View, StyleSheet, FlatList, Button, Modal, Text, TouchableOpacity } from 'react-native';
 import { Card, Title, Paragraph } from 'react-native-paper';
 import Api from '../services/Api';
+import * as ScreenOrientation from 'expo-screen-orientation';
+
 
 import aguaImage from '../img/agua.png';
 import ventoImage from '../img/vento.png';
@@ -20,6 +22,21 @@ export default function Jogo() {
   const checkTeamIsComplete = (team) => {
     return team.length === 3;
   };
+
+
+  useEffect(() => {
+    async function setLandscapeOrientation() {
+      await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
+    }
+  
+    setLandscapeOrientation();
+  
+    return async () => {
+      await ScreenOrientation.unlockAsync();
+    };
+  }, []);
+  
+
 
   useEffect(() => {
     setIsTeam1Ready(checkTeamIsComplete(team1));

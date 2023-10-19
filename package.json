@@ -27,7 +27,8 @@
     "react-native-vector-icons": "^10.0.0",
     "react-native-web": "~0.19.6",
     "react-dom": "18.2.0",
-    "@expo/webpack-config": "^19.0.0"
+    "@expo/webpack-config": "^19.0.0",
+    "expo-screen-orientation": "~6.0.5"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0"
