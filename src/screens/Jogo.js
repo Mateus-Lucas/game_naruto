@@ -246,22 +246,25 @@ const styles = StyleSheet.create({
     borderWidth: 8,
     borderColor: 'black',
     padding: 8,
-    width: 220,
+    width: 180, // Reduza a largura do card
     backgroundColor: '#800000',
-
   },
+
   image: {
     borderRadius: 0,
-    height: 130,
+    height: 70, // Reduza a altura da imagem
   },
   characterName: {
     margin: 5,
     color: 'white',
+    fontSize: 14, // Reduza o tamanho da fonte
   },
   textStyle: {
     fontWeight: 'bold',
     color: 'white',
+    fontSize: 14, // Reduza o tamanho da fonte
   },
+
   cardAtributos: {
     backgroundColor: 'black',
     padding: 7,
