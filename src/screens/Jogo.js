@@ -1,28 +1,49 @@
 import React, { useEffect, useState } from 'react';
-import { View, StyleSheet, ScrollView, Button, Modal, Text, TouchableOpacity, FlatList } from 'react-native';
+import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image } from 'react-native';
 import { Card, Title, Paragraph, ProgressBar } from 'react-native-paper';
-import Api from '../services/Api';
 import * as ScreenOrientation from 'expo-screen-orientation';
+import Api from '../services/Api';
+
+import aguaImage from '../img/agua.png';
+import ventoImage from '../img/vento.png';
+import fogoImage from '../img/fogo.png';
+import relampagoImage from '../img/relampago.png';
+import terraImage from '../img/terra.png';
 
 export default function Jogo() {
-  const [teamA, setTeamA] = useState([]);
-  const [teamB, setTeamB] = useState([]);
-  const [isTeamAReady, setIsTeamAReady] = useState(false);
-  const [isTeamBReady, setIsTeamBReady] = useState(false);
-  const [selectionPhase, setSelectionPhase] = useState('teamA');
-  const [isModalVisible, setIsModalVisible] = useState(true);
+  const [timeA, setTimeA] = useState([]);
+  const [timeB, setTimeB] = useState([]);
+  const [timeACompleto, setTimeACompleto] = useState(false);
+  const [timeBCompleto, setTimeBCompleto] = useState(false);
+  const [faseSelecao, setFaseSelecao] = useState('timeA');
+  const [modalVisivel, setModalVisivel] = useState(true);
   const [vida, setVida] = useState(25000);
 
-  const checkTeamIsComplete = (team) => {
-    return team.length === 3;
+  const getChakraImage = (natureza) => {
+    switch (natureza) {
+      case 'Água':
+        return aguaImage;
+      case 'Vento':
+        return ventoImage;
+      case 'Fogo':
+        return fogoImage;
+      case 'Relâmpago':
+        return relampagoImage;
+      case 'Terra':
+        return terraImage;
+      default:
+        return null;
+    }
   };
 
+  const verificarTimeCompleto = (time) => time.length === 3;
+
   useEffect(() => {
-    async function setLandscapeOrientation() {
+    async function definirOrientacaoPaisagem() {
       await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
     }
 
-    setLandscapeOrientation();
+    definirOrientacaoPaisagem();
 
     return async () => {
       await ScreenOrientation.unlockAsync();
@@ -30,186 +51,185 @@ export default function Jogo() {
   }, []);
 
   useEffect(() => {
-    setIsTeamAReady(checkTeamIsComplete(teamA));
-    setIsTeamBReady(checkTeamIsComplete(teamB));
-  }, [teamA, teamB]);
+    setTimeACompleto(verificarTimeCompleto(timeA));
+    setTimeBCompleto(verificarTimeCompleto(timeB));
+  }, [timeA, timeB]);
 
-  const generateKey = (prefix, character) => `${prefix}_${character.id}`;
+  const gerarChave = (prefixo, personagem) => `${prefixo}_${personagem.id}`;
 
-  const handleChooseCharacter = () => {
-    setIsChoosingCharacter(true);
-  };
-
-  const handleCharacterSelection = (character) => {
-    if (selectionPhase === 'completed') {
-      setIsModalVisible(false);
+  const lidarComSelecaoDePersonagem = (personagem) => {
+    if (faseSelecao === 'completo') {
+      setModalVisivel(false);
       return;
     }
 
-    if (selectionPhase === 'teamA' && teamA.length < 3) {
-      // Defina o valor de vida inicial para o personagem
-      character.vida = 25000; // 100 é um exemplo, ajuste conforme necessário
-      setTeamA([...teamA, character]);
-    } else if (selectionPhase === 'teamB' && teamB.length < 3) {
-      // Defina o valor de vida inicial para o personagem
-      character.vida = 25000; // 100 é um exemplo, ajuste conforme necessário
-      setTeamB([...teamB, character]);
+    if (faseSelecao === 'timeA' && timeA.length < 3) {
+      personagem.vida = 25000;
+      setTimeA([...timeA, personagem]);
+    } else if (faseSelecao === 'timeB' && timeB.length < 3) {
+      personagem.vida = 25000;
+      setTimeB([...timeB, personagem]);
     }
 
-    if (teamA.length === 3 && teamB.length === 3) {
-      setIsModalVisible(false);
-      setSelectionPhase('completed');
-    } else if (selectionPhase === 'teamA' && teamA.length === 3) {
-      setSelectionPhase('teamB');
+    if (timeA.length === 3 && timeB.length === 3) {
+      setModalVisivel(false);
+      setFaseSelecao('completo');
+    } else if (faseSelecao === 'timeA' && timeA.length === 3) {
+      setFaseSelecao('timeB');
     }
   };
 
-
-  const getSelectionMessage = () => {
-    if (teamA.length < 3) {
+  const obterMensagemDeSelecao = () => {
+    if (timeA.length < 3) {
       return 'Selecione personagens para o Time A';
-    } else if (teamB.length < 3) {
+    } else if (timeB.length < 3) {
       return 'Selecione personagens para o Time B';
     } else {
       return 'Seleção concluída';
     }
   };
 
-  const availableCharacters = Api.filter((character) => {
-    return !teamA.includes(character) && !teamB.includes(character);
+  const personagensDisponiveis = Api.filter((personagem) => {
+    return !timeA.includes(personagem) && !timeB.includes(personagem);
   });
 
-  const handleResetSelection = () => {
-    setTeamA([]);
-    setTeamB([]);
-    setSelectionPhase('teamA');
-    setIsChoosingCharacter(true);
+  const reiniciarSelecao = () => {
+    setTimeA([]);
+    setTimeB([]);
+    setFaseSelecao('timeA');
   };
 
-  const closeModal = () => {
-    setIsModalVisible(false);
+  const fecharModal = () => {
+    setModalVisivel(false);
   };
+
+  const fatorEscala = 0.5;
 
   return (
     <View style={styles.container}>
-      <ScrollView
-        horizontal={true}
-        contentContainerStyle={styles.scrollViewContent}
-      >
-        <View style={styles.teamContainer}>
-          {isTeamAReady && (
-            <View>
-              <FlatList
-                data={teamA}
-                horizontal={true}
-                keyExtractor={(item) => generateKey('teamA', item)}
-                renderItem={({ item }) => (
-                  <Card style={styles.card}>
-                    <Card style={{ backgroundColor: '#600000' }}>
-                      <Title style={styles.characterName}>{item.nome}</Title>
-                      <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
-                    </Card>
-                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                      <Text>Patente: {item.patente}</Text>
-                    </Paragraph>
-                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                      <Text>Jutsu: {item.jutsu_especial}</Text>
-                    </Paragraph>
-                    <Card style={styles.cardAtributos}>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
-                      </Paragraph>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
-                      </Paragraph>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Jutso: {item.dano_especial}</Text>
-                      </Paragraph>
-                    </Card>
-                  </Card>
-                )}
-              />
-              <View style={styles.teamAProgressContainer}>
-                {teamA.map((character) => (
-                  <View key={character.id}>
-                    <Title style={styles.characterName}>{character.nome}</Title>
-                    <ProgressBar
-                      progress={character.vida / 25000} // Ajuste conforme necessário
-                      color={'green'} // Cor da barra de vida
-                      style={styles.progressStyle} // Estilo da barra de vida
-                    />
-                  </View>
-                ))}
-              </View>
-            </View>
-          )}
-        </View>
-
-        <View style={styles.teamContainer}>
-          {isTeamBReady && (
-            <View>
-
-              <FlatList
-                data={teamB}
-                horizontal={true}
-                keyExtractor={(item) => generateKey('teamB', item)}
-                renderItem={({ item }) => (
-                  <Card style={styles.card}>
-                    <Card style={{ backgroundColor: '#600000' }}>
-                      <Title style={styles.characterName}>{item.nome}</Title>
-                      <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
-                    </Card>
-                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                      <Text>Patente: {item.patente}</Text>
-                    </Paragraph>
-                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                      <Text>Jutsu: {item.jutsu_especial}</Text>
-                    </Paragraph>
-                    <Card style={styles.cardAtributos}>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
-                      </Paragraph>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
-                      </Paragraph>
-                      <Paragraph style={styles.textCard}>
-                        <Text style={styles.textStyle}>Especial: {item.dano_especial}</Text>
-                      </Paragraph>
-                    </Card>
-                  </Card>
-                )}
-              />
-              <View style={styles.teamAProgressContainer}>
-                {teamA.map((character) => (
-                  <View key={character.id}>
-                    <Title style={styles.characterName}>{character.nome}</Title>
-                    <ProgressBar
-                      progress={character.vida / 25000} // Ajuste conforme necessário
-                      color={'green'} // Cor da barra de vida
-                      style={styles.progressStyle} // Estilo da barra de vida
-                    />
-                  </View>
-                ))}
-              </View>
-            </View>
-          )}
-        </View>
-
-      </ScrollView>
-
-      {/* <Button title="Escolher Personagem" onPress={handleChooseCharacter} /> */}
-      <Modal visible={selectionPhase !== 'completed'} animationType="slide" transparent={true}>
-        <View style={styles.modalContainer}>
-          <View style={styles.modalContent}>
-            <Title style={styles.titleModal}>{getSelectionMessage()}</Title>
+      <View style={[styles.containerTime, { transform: [{ scale: fatorEscala }] }]}>
+        {timeACompleto && (
+          <View>
             <FlatList
-              data={availableCharacters}
+              data={timeA}
+              horizontal={true}
+              keyExtractor={(item) => gerarChave('timeA', item)}
+              renderItem={({ item }) => (
+                <Card style={styles.card}>
+                  <Card style={{ backgroundColor: '#600000' }}>
+                    <Title style={styles.nomePersonagem}>{item.nome}</Title>
+
+                    <Card.Cover source={{ uri: item.imagem }} style={styles.imagem} />
+                    <View style={{ position: 'relative' }}>
+                      <Image
+                        source={getChakraImage(item.natureza_de_chacra)}
+                        style={styles.imageNat}
+                      />
+                    </View>
+                  </Card>
+                  <Paragraph style={{ fontWeight: 'bold', color: 'white', marginTop: 10 }}>
+                    <Text>Patente: {item.patente}</Text>
+                  </Paragraph>
+                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                    <Text>Jutsu: {item.jutsu_especial}</Text>
+                  </Paragraph>
+                  <Card style={styles.cardAtributos}>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Ataque: {item.ataque}</Text>
+                    </Paragraph>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Defesa: {item.defesa}</Text>
+                    </Paragraph>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Jutso: {item.dano_especial}</Text>
+                    </Paragraph>
+                  </Card>
+                </Card>
+              )}
+            />
+            <View style={styles.containerProgressoTimeA}>
+              {timeA.map((personagem) => (
+                <View key={personagem.id}>
+                  <Title style={styles.nomePersonagem}>{personagem.nome}</Title>
+                  <ProgressBar
+                    progress={personagem.vida / 25000}
+                    color={'green'}
+                    style={styles.estiloProgresso}
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
+
+      <View style={[styles.containerTime, { transform: [{ scale: fatorEscala }] }]}>
+        {timeBCompleto && (
+          <View>
+            <FlatList
+              data={timeB}
+              horizontal={true}
+              keyExtractor={(item) => gerarChave('timeB', item)}
+              renderItem={({ item }) => (
+                <Card style={styles.card}>
+                  <Card style={{ backgroundColor: '#600000' }}>
+                    <Title style={styles.nomePersonagem}>{item.nome}</Title>
+                    <Card.Cover source={{ uri: item.imagem }} style={styles.imagem} />
+                    <View style={{ position: 'relative' }}>
+                      <Image
+                        source={getChakraImage(item.natureza_de_chacra)}
+                        style={styles.imageNat}
+                      />
+                    </View>
+                  </Card>
+                  <Paragraph style={{ fontWeight: 'bold', color: 'white', marginTop: 10  }}>
+                    <Text>Patente: {item.patente}</Text>
+                  </Paragraph>
+                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                    <Text>Jutsu: {item.jutsu_especial}</Text>
+                  </Paragraph>
+                  <Card style={styles.cardAtributos}>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Ataque: {item.ataque}</Text>
+                    </Paragraph>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Defesa: {item.defesa}</Text>
+                    </Paragraph>
+                    <Paragraph style={styles.textoCard}>
+                      <Text style={styles.estiloTexto}>Especial: {item.dano_especial}</Text>
+                    </Paragraph>
+                  </Card>
+                </Card>
+              )}
+            />
+            <View style={styles.containerProgressoTimeB}>
+              {timeB.map((personagem) => (
+                <View key={personagem.id}>
+                  <Title style={styles.nomePersonagem}>{personagem.nome}</Title>
+                  <ProgressBar
+                    progress={personagem.vida / 25000}
+                    color={'green'}
+                    style={styles.estiloProgresso}
+                  />
+                </View>
+              ))}
+            </View>
+          </View>
+        )}
+      </View>
+
+      <Modal visible={faseSelecao !== 'completo'} animationType="slide" transparent={true}>
+        <View style={styles.containerModal}>
+          <View style={styles.conteudoModal}>
+            <Title style={styles.tituloModal}>{obterMensagemDeSelecao()}</Title>
+            <FlatList
+              data={personagensDisponiveis}
               keyExtractor={(item) => item.id.toString()}
               renderItem={({ item }) => (
-                <TouchableOpacity onPress={() => handleCharacterSelection(item)}>
+                <TouchableOpacity onPress={() => lidarComSelecaoDePersonagem(item)}>
                   <Card style={styles.cardModal}>
                     <Title style={{ color: 'white' }}>{item.nome}</Title>
-                    <Card.Cover source={{ uri: item.imagem }} style={styles.imageModal} />
+                    <Card.Cover source={{ uri: item.imagem }} style={styles.imagemModal} />
                   </Card>
                 </TouchableOpacity>
               )}
@@ -217,7 +237,6 @@ export default function Jogo() {
           </View>
         </View>
       </Modal>
-      {/* <Button title="Reset" onPress={handleResetSelection} /> */}
     </View>
   );
 }
@@ -226,20 +245,17 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     backgroundColor: 'black',
-  },
-  scrollViewContent: {
     flexDirection: 'row',
   },
-  teamContainer: {
+  containerTime: {
     flex: 1,
-    marginRight: 200
   },
-  modalContainer: {
+  containerModal: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
-  modalContent: {
+  conteudoModal: {
     width: '40%',
     backgroundColor: 'black',
     padding: 16,
@@ -248,7 +264,7 @@ const styles = StyleSheet.create({
     borderColor: 'red',
     marginBottom: 50,
   },
-  titleModal: {
+  tituloModal: {
     marginBottom: 10,
     marginTop: 50,
     color: 'white',
@@ -263,32 +279,28 @@ const styles = StyleSheet.create({
     borderWidth: 8,
     borderColor: 'black',
     padding: 8,
-    width: 180, // Reduza a largura do card
+    width: 220,
     backgroundColor: '#800000',
   },
-
-  image: {
+  imagem: {
     borderRadius: 0,
-    height: 70, // Reduza a altura da imagem
+    height: 130,
   },
-  characterName: {
+  nomePersonagem: {
     margin: 5,
     color: 'white',
-    fontSize: 14, // Reduza o tamanho da fonte
   },
-  textStyle: {
+  estiloTexto: {
     fontWeight: 'bold',
     color: 'white',
-    fontSize: 14, // Reduza o tamanho da fonte
   },
-
   cardAtributos: {
     backgroundColor: 'black',
     padding: 7,
     borderTopRadius: 0,
     marginTop: 5,
   },
-  textCard: {
+  textoCard: {
     justifyContent: 'space-between',
     backgroundColor: 'gray',
     color: 'white',
@@ -296,16 +308,26 @@ const styles = StyleSheet.create({
     borderTopRightRadius: 10,
     borderBottomLeftRadius: 10,
   },
-  imageModal: {
+  imagemModal: {
     borderRadius: 0,
     height: 130,
   },
-  progressStyle: {
+  estiloProgresso: {
     height: 10,
     marginTop: 4,
-    width: 500
+    width: 500,
   },
-  teamAProgressContainer: {
-    marginLeft: 20
-  }
+  containerProgressoTimeA: {
+    marginLeft: 20,
+  },
+  containerProgressoTimeB: {
+    marginLeft: 20,
+  },
+  imageNat: {
+    width: 35,
+    height: 35,
+    position: 'absolute',
+    top: -23,
+    left: 75,
+  },
 });
