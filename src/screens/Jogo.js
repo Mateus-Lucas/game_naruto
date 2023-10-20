@@ -48,11 +48,11 @@ export default function Jogo() {
 
     if (selectionPhase === 'teamA' && teamA.length < 3) {
       // Defina o valor de vida inicial para o personagem
-      character.vida = 100; // 100 é um exemplo, ajuste conforme necessário
+      character.vida = 25000; // 100 é um exemplo, ajuste conforme necessário
       setTeamA([...teamA, character]);
     } else if (selectionPhase === 'teamB' && teamB.length < 3) {
       // Defina o valor de vida inicial para o personagem
-      character.vida = 100; // 100 é um exemplo, ajuste conforme necessário
+      character.vida = 25000; // 100 é um exemplo, ajuste conforme necessário
       setTeamB([...teamB, character]);
     }
 
@@ -98,83 +98,103 @@ export default function Jogo() {
       >
         <View style={styles.teamContainer}>
           {isTeamAReady && (
-            <FlatList
-              data={teamA}
-              horizontal={true}
-              keyExtractor={(item) => generateKey('teamA', item)}
-              renderItem={({ item }) => (
-                <Card style={styles.card}>
-                  <Card style={{ backgroundColor: '#600000' }}>
-                    <Title style={styles.characterName}>{item.nome}</Title>
-                    <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
+            <View>
+              <FlatList
+                data={teamA}
+                horizontal={true}
+                keyExtractor={(item) => generateKey('teamA', item)}
+                renderItem={({ item }) => (
+                  <Card style={styles.card}>
+                    <Card style={{ backgroundColor: '#600000' }}>
+                      <Title style={styles.characterName}>{item.nome}</Title>
+                      <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
+                    </Card>
+                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                      <Text>Patente: {item.patente}</Text>
+                    </Paragraph>
+                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                      <Text>Jutsu: {item.jutsu_especial}</Text>
+                    </Paragraph>
+                    <Card style={styles.cardAtributos}>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
+                      </Paragraph>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
+                      </Paragraph>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Jutso: {item.dano_especial}</Text>
+                      </Paragraph>
+                    </Card>
                   </Card>
-                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                    <Text>Patente: {item.patente}</Text>
-                  </Paragraph>
-                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                    <Text>Jutsu Especial: {item.jutsu_especial}</Text>
-                  </Paragraph>
-                  <Card style={styles.cardAtributos}>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
-                    </Paragraph>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
-                    </Paragraph>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Especial: {item.dano_especial}</Text>
-                    </Paragraph>
-                  </Card>
-                  <ProgressBar
-                    progress={item.vida / 100} // Ajuste conforme necessário
-                    color={'green'} // Cor da barra de vida
-                    style={{ height: 8, marginTop: 8 }} // Estilo da barra de vida
-                  />
-                </Card>
-              )}
-            />
+                )}
+              />
+              <View style={styles.teamAProgressContainer}>
+                {teamA.map((character) => (
+                  <View key={character.id}>
+                    <Title style={styles.characterName}>{character.nome}</Title>
+                    <ProgressBar
+                      progress={character.vida / 25000} // Ajuste conforme necessário
+                      color={'green'} // Cor da barra de vida
+                      style={styles.progressStyle} // Estilo da barra de vida
+                    />
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
         </View>
 
         <View style={styles.teamContainer}>
           {isTeamBReady && (
-            <FlatList
-              data={teamB}
-              horizontal={true}
-              keyExtractor={(item) => generateKey('teamB', item)}
-              renderItem={({ item }) => (
-                <Card style={styles.card}>
-                  <Card style={{ backgroundColor: '#600000' }}>
-                    <Title style={styles.characterName}>{item.nome}</Title>
-                    <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
+            <View>
+
+              <FlatList
+                data={teamB}
+                horizontal={true}
+                keyExtractor={(item) => generateKey('teamB', item)}
+                renderItem={({ item }) => (
+                  <Card style={styles.card}>
+                    <Card style={{ backgroundColor: '#600000' }}>
+                      <Title style={styles.characterName}>{item.nome}</Title>
+                      <Card.Cover source={{ uri: item.imagem }} style={styles.image} />
+                    </Card>
+                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                      <Text>Patente: {item.patente}</Text>
+                    </Paragraph>
+                    <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
+                      <Text>Jutsu: {item.jutsu_especial}</Text>
+                    </Paragraph>
+                    <Card style={styles.cardAtributos}>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
+                      </Paragraph>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
+                      </Paragraph>
+                      <Paragraph style={styles.textCard}>
+                        <Text style={styles.textStyle}>Especial: {item.dano_especial}</Text>
+                      </Paragraph>
+                    </Card>
                   </Card>
-                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                    <Text>Patente: {item.patente}</Text>
-                  </Paragraph>
-                  <Paragraph style={{ fontWeight: 'bold', color: 'white' }}>
-                    <Text>Jutsu Especial: {item.jutsu_especial}</Text>
-                  </Paragraph>
-                  <Card style={styles.cardAtributos}>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Ataque: {item.ataque}</Text>
-                    </Paragraph>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Defesa: {item.defesa}</Text>
-                    </Paragraph>
-                    <Paragraph style={styles.textCard}>
-                      <Text style={styles.textStyle}>Especial: {item.dano_especial}</Text>
-                    </Paragraph>
-                  </Card>
-                  <ProgressBar
-                    progress={item.vida / 100} // Ajuste conforme necessário
-                    color={'green'} // Cor da barra de vida
-                    style={{ height: 8, marginTop: 8 }} // Estilo da barra de vida
-                  />
-                </Card>
-              )}
-            />
+                )}
+              />
+              <View style={styles.teamAProgressContainer}>
+                {teamA.map((character) => (
+                  <View key={character.id}>
+                    <Title style={styles.characterName}>{character.nome}</Title>
+                    <ProgressBar
+                      progress={character.vida / 25000} // Ajuste conforme necessário
+                      color={'green'} // Cor da barra de vida
+                      style={styles.progressStyle} // Estilo da barra de vida
+                    />
+                  </View>
+                ))}
+              </View>
+            </View>
           )}
         </View>
+
       </ScrollView>
 
       {/* <Button title="Escolher Personagem" onPress={handleChooseCharacter} /> */}
@@ -213,9 +233,6 @@ const styles = StyleSheet.create({
   teamContainer: {
     flex: 1,
     marginRight: 200
-
-
-
   },
   modalContainer: {
     flex: 1,
@@ -268,8 +285,7 @@ const styles = StyleSheet.create({
   cardAtributos: {
     backgroundColor: 'black',
     padding: 7,
-    borderTopLeftRadius: 0,
-    borderTopRightRadius: 0,
+    borderTopRadius: 0,
     marginTop: 5,
   },
   textCard: {
@@ -284,4 +300,12 @@ const styles = StyleSheet.create({
     borderRadius: 0,
     height: 130,
   },
+  progressStyle: {
+    height: 10,
+    marginTop: 4,
+    width: 500
+  },
+  teamAProgressContainer: {
+    marginLeft: 20
+  }
 });
