@@ -83,7 +83,7 @@ const Api = [
     {
         "nome": "Shikamaru Nara",
         "clã": "Nara",
-        "jutsu_especial": "Shadow Possession Jutsu",
+        "jutsu_especial": "Shadow Possession",
         "dano_especial": 850,
         "natureza_de_chacra": "Vento",
         "patente": "Jonin",
