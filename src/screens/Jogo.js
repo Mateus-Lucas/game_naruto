@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useRef } from 'react';
 import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, ImageBackground } from 'react-native';
-import { Card, Title, Paragraph, ProgressBar } from 'react-native-paper';
-import Sound from 'react-native-sound';
+import { Card, Title, Paragraph, ProgressBar, Button } from 'react-native-paper';
+import { Audio } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Api from '../services/Api';
 
@@ -22,6 +22,7 @@ export default function Jogo() {
   const [vida, setVida] = useState(25000);
   const [progressoTimeA, setProgressoTimeA] = useState(0);
   const progressoRef = useRef(null);
+  const [sound, setSound] = React.useState();
 
   const getChakraImage = (natureza) => {
     switch (natureza) {
@@ -83,25 +84,30 @@ export default function Jogo() {
     }
   };
 
-  useEffect(() => {
-    // Crie um novo objeto Sound com o caminho para o arquivo de áudio
-    const sound = new Sound('../src/audio/musicaFundo.mpeg', '', (error) => {
-      if (error) {
-        console.log('Erro ao carregar o áudio', error);
-        return;
+
+  async function playSound() {
+    console.log('Loading Sound');
+    const { sound } = await Audio.Sound.createAsync(
+      require('../audio/musicaFundo.mpeg'),
+      {
+        isLooping: true, // Reprodução infinita
       }
-
-      // Configurar para reproduzir em loop
-      sound.setNumberOfLoops(-1);
-
-      // Iniciar a reprodução
-      sound.play();
-    });
-
-    // Retorne uma função de limpeza para parar o áudio quando o componente for desmontado
+    );
+    setSound(sound);
+  
+    console.log('Playing Sound');
+    await sound.playAsync();
+  }
+  
+  useEffect(() => {
+    playSound(); // Inicie a reprodução de música quando o componente for montado
+  
     return () => {
-      sound.stop(); // Pare a reprodução
-      sound.release(); // Libere os recursos
+      if (sound) {
+        console.log('Unloading Sound');
+        sound.stopAsync(); // Pare o som antes de descarregá-lo
+        sound.unloadAsync();
+      }
     };
   }, []);
 
