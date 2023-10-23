@@ -4,7 +4,7 @@ import React from 'react'
 export default function Login() {
   return (
     <View>
-      <Text>entrei no trabalho viu cuma</Text>
+      <Text>entrei no trabalho, viu cuma</Text>
     </View>
   )
 }
