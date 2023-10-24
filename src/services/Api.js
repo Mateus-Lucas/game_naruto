@@ -19,7 +19,8 @@ const Api = [
         "natureza_de_chacra": "Relâmpago",
         "patente": "Ninja Renegado",
         "defesa": 850,
-        "ataque": 970, "id": 2
+        "ataque": 970,
+        "id": 2
     },
     {
         "nome": "Sakura Haruno",
@@ -94,7 +95,7 @@ const Api = [
     },
     {
         "nome": "Rock Lee",
-        "clã": "Não tem",
+        "clã": "Konoha",
         "jutsu_especial": "Eight Gates",
         "dano_especial": 1100,
         "natureza_de_chacra": "Taijutsu",
@@ -103,6 +104,18 @@ const Api = [
         "ataque": 800,
         "imagem": "https://example.com/rock-lee.png",
         "id": 9
+    },
+    {
+        "nome": "Might Guy",
+        "clã": "Konoha",
+        "jutsu_especial": "Eight Gates",
+        "dano_especial": 1100,
+        "natureza_de_chacra": "Taijutsu",
+        "patente": "jounin",
+        "defesa": 960,
+        "ataque": 850,
+        "imagem": "https://example.com/Might Guy.png",
+        "id": 10
     },
     {
         "nome": "Tenten",
@@ -114,7 +127,7 @@ const Api = [
         "defesa": 870,
         "ataque": 820,
         "imagem": "https://example.com/tenten.png",
-        "id": 10
+        "id": 11
     },
     {
         "nome": "Neji Hyuga",
@@ -126,7 +139,7 @@ const Api = [
         "defesa": 900,
         "ataque": 950,
         "imagem": "https://example.com/neji.png",
-        "id": 11
+        "id": 12
     },
     {
         "nome": "Kiba Inuzuka",
@@ -138,7 +151,7 @@ const Api = [
         "defesa": 870,
         "ataque": 980,
         "imagem": "https://example.com/kiba.png",
-        "id": 12
+        "id": 13
     },
     {
         "nome": "Shino Aburame",
@@ -150,7 +163,7 @@ const Api = [
         "defesa": 920,
         "ataque": 890,
         "imagem": "https://example.com/shino.png",
-        "id": 13
+        "id": 14
     },
 
 ]
