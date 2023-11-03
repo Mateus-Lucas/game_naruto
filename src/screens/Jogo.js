@@ -23,6 +23,11 @@ export default function Jogo() {
   const [progressoTimeA, setProgressoTimeA] = useState(0);
   const progressoRef = useRef(null);
   const [sound, setSound] = React.useState();
+  const [turno, setTurno] = useState('timeA');
+  const [dadoAtaque, setDadoAtaque] = useState(0);
+  const [dadoDefesa, setDadoDefesa] = useState(0);
+  const [danoCausado, setDanoCausado] = useState(0);
+
 
   const getChakraImage = (natureza) => {
     switch (natureza) {
@@ -42,6 +47,35 @@ export default function Jogo() {
   };
 
   const verificarTimeCompleto = (time) => time.length === 3;
+
+  const lancarDados = () => {
+    const dadoAtaque = Math.floor(Math.random() * 6) + 1;
+    const dadoDefesa = Math.floor(Math.random() * 6) + 1;
+    setDadoAtaque(dadoAtaque);
+    setDadoDefesa(dadoDefesa);
+  };
+
+  const calcularDanoEAplicar = () => {
+    // Calcule o dano com base nos dados de ataque e defesa
+    const dano = dadoAtaque > dadoDefesa ? dadoAtaque - dadoDefesa : 0;
+
+    // Atualize a vida do time inimigo
+    const timeInimigo = turno === 'timeA' ? timeB : timeA;
+    const novoTimeInimigo = [...timeInimigo];
+    novoTimeInimigo.forEach((personagem) => {
+      if (personagem.vida > 0) {
+        personagem.vida -= dano;
+      }
+    });
+
+    // Atualize o dano causado
+    setDanoCausado(dano);
+
+    // Alterne o turno
+    setTurno(turno === 'timeA' ? 'timeB' : 'timeA');
+  };
+
+
 
   useEffect(() => {
     async function definirOrientacaoPaisagem() {
@@ -94,14 +128,14 @@ export default function Jogo() {
       }
     );
     setSound(sound);
-  
+
     console.log('Playing Sound');
     await sound.playAsync();
   }
-  
+
   useEffect(() => {
     playSound(); // Inicie a reprodução de música quando o componente for montado
-  
+
     return () => {
       if (sound) {
         console.log('Unloading Sound');
@@ -229,6 +263,22 @@ export default function Jogo() {
             </View>
           )}
         </View>
+
+        <View style={{ backgroundColor: 'red', width: '8%' }}>
+
+          <Text style={{color: 'blue'}}>Dado Time A: {dadoAtaque}</Text>
+          <Text style={{color: 'green'}}>Dado de Defesa: {dadoDefesa}</Text>
+          <Text>Dano Causado: {danoCausado}</Text>
+          <TouchableOpacity
+            title="Atacar"
+            style={{ backgroundColor: 'blue' }}
+            onPress={() => {
+              lancarDados();
+              calcularDanoEAplicar();
+            }} />
+        </View>
+
+
         <View style={styles.containerTimeB}>
           {timeBCompleto && (
             <View>
