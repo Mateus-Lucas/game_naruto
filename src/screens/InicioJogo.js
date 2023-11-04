@@ -35,9 +35,7 @@ export default function InicioJogo(props) {
                         <Text>1. Selecione seus 3 personagens pelo modal que aparecer na tela.</Text>
                         <Text>2. O jogo é de duas pessoas.</Text>
                         <Text>3. Gire os dados para atacar e defender.</Text>
-                        <Text>4. As naturezas de chacra que tem vantagem dão 10% a mais de dano.</Text>
-                        <Text>5. A patente do personagem influencia na probabilidade dele acertor o golpe</Text>
-                        <Text>6. Ganha aquele que vencer todos 3 personagens adversários.</Text>
+                        <Text>4. O dado do time que for maior, ganha e aplica dano no adversário.</Text>
                         <Button
                             mode="contained"
                             style={styles.modalButton}

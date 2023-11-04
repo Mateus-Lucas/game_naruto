@@ -1,15 +1,19 @@
 import React, { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, ImageBackground } from 'react-native';
+import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, ImageBackground, Animated } from 'react-native';
 import { Card, Title, Paragraph, ProgressBar, Button } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Api from '../services/Api';
+import dado1 from '../img/dado1.jpg'
+import dado2 from '../img/dado2.jpg'
+import { LogBox } from 'react-native';
 
 import aguaImage from '../img/agua.png';
 import ventoImage from '../img/vento.png';
 import fogoImage from '../img/fogo.png';
 import relampagoImage from '../img/relampago.png';
 import terraImage from '../img/terra.png';
+import { Easing } from 'react-native-reanimated';
 export default function Jogo() {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
@@ -21,8 +25,9 @@ export default function Jogo() {
   const [progressoTimeB, setProgressoTimeB] = useState(1.0); // 1.0 representa 100%
   const [resultadoDadoTimeA, setResultadoDadoTimeA] = useState(null);
   const [resultadoDadoTimeB, setResultadoDadoTimeB] = useState(null);
+  const [dadoRotation] = useState(new Animated.Value(0));
 
-
+  LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 
   const getChakraImage = (natureza) => {
     switch (natureza) {
@@ -40,6 +45,16 @@ export default function Jogo() {
         return null;
     }
   };
+
+  const resultadoParaImagem = {
+    1: dado1,
+    2: dado2,
+    3: null,
+    4: null,
+    5: null,
+    6: null
+  };
+
 
   const verificarTimeCompleto = (time) => time.length === 3;
 
@@ -125,14 +140,27 @@ export default function Jogo() {
     setResultadoDadoTimeA(resultadoDadoTimeA);
     setResultadoDadoTimeB(resultadoDadoTimeB);
 
+    Animated.timing(dadoRotation, {
+      toValue: 360, // 360 graus para uma rotação completa
+      duration: 1000, // Duração da animação em milissegundos
+      easing: Easing.linear, // Tipo de animação (linear para rotação uniforme)
+    }).start(() => {
+      // A animação foi concluída, você pode redefinir a rotação aqui se desejar.
+      dadoRotation.setValue(0);
+    });
+
+
     if (resultadoDadoTimeA > resultadoDadoTimeB) {
       // Time A ataca
       const novoProgressoTimeB = progressoTimeB - 0.1; // Reduz o progresso em 10%
       setProgressoTimeB(novoProgressoTimeB);
-    } else {
+    } else if (resultadoDadoTimeA < resultadoDadoTimeB){
       // Time B ataca
       const novoProgressoTimeA = progressoTimeA - 0.1; // Reduz o progresso em 10%
       setProgressoTimeA(novoProgressoTimeA);
+    }
+    else{
+      alert('Empate')
     }
   };
 
@@ -183,7 +211,11 @@ export default function Jogo() {
       }, 100); // Espere 100ms antes de redefinir o jogo
     }
   }, [progressoTimeA, progressoTimeB]);
-  
+
+  const dadoImageStyle = {
+    transform: [{ rotate: dadoRotation.interpolate({ inputRange: [0, 360], outputRange: ['0deg', '360deg'] }) }],
+  };
+
 
   return (
     <View style={styles.container}>
@@ -246,22 +278,31 @@ export default function Jogo() {
           )}
         </View>
 
-        <View style={{ backgroundColor: 'red', width: '8%' }}>
+        <View style={{ marginTop: 25 }}>
 
+          <Text style={styles.textDados}>Time A</Text>
+          <Animated.Image
+            source={resultadoParaImagem[resultadoDadoTimeA]}
+            style={[styles.dadoImage, dadoImageStyle]}
+            useNativeDriver={true}
+          />
           <TouchableOpacity
             title="Atacar"
-            style={{ backgroundColor: 'blue' }}
+            style={styles.botaoDados}
             onPress={() => {
               lancarDados();
               calcularDanoEAplicar();
             }}
           >
-            <Text>Atacar</Text>
+            <Text style={{color: 'white'}}>ROLAR</Text>
           </TouchableOpacity>
-          <Text>Resultado Dado Time A: {resultadoDadoTimeA}</Text>
-          <Text>Resultado Dado Time B: {resultadoDadoTimeB}</Text>
 
-
+          <Animated.Image
+            source={resultadoParaImagem[resultadoDadoTimeB]}
+            style={[styles.dadoImage, dadoImageStyle]}
+            useNativeDriver={true}
+          />
+           <Text style={styles.textDados}>Time B</Text>
 
         </View>
 
@@ -480,5 +521,38 @@ const styles = StyleSheet.create({
     marginRight: 8,
     fontSize: 13
   },
+  dadoImage: {
+    alignSelf: 'center',
+    alignItems: 'center',
+    width: 50, // Defina o tamanho desejado
+    height: 50, // Defina o tamanho desejado
+    borderRadius: 20, // Define metade da largura/altura para criar um círculo
+    backgroundColor: 'white', // Cor de fundo do dado
+    borderWidth: 2, // Largura da borda
+    borderColor: 'black', // Cor da borda
+    justifyContent: 'center', // Para centralizar o conteúdo (número)
+    alignItems: 'center',
+    transform: [{ scale: 0.7 }], // Reduzir o tamanho
+    marginTop: 10,
+    marginBottom: 5
+  },
+  botaoDados: {
+    backgroundColor: 'red',
+    marginTop: 5,
+    padding: 5,
+    borderRadius: 5,
+    borderWidth: 3,
+    borderColor: 'black',
+    textColor: 'white'
+  },
+  textDados: {
+    backgroundColor: 'red',
+    padding: 3,
+    borderRadius: 5,
+    alignItems: 'center',
+    borderWidth: 2,
+    borderColor: 'black',
+    color: 'white',
+  }
 });
 
