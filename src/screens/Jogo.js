@@ -4,16 +4,20 @@ import { Card, Title, Paragraph, ProgressBar, Button } from 'react-native-paper'
 import { Audio } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Api from '../services/Api';
-import dado1 from '../img/dado1.jpg'
-import dado2 from '../img/dado2.jpg'
 import { LogBox } from 'react-native';
+import { Easing } from 'react-native-reanimated';
 
 import aguaImage from '../img/agua.png';
 import ventoImage from '../img/vento.png';
 import fogoImage from '../img/fogo.png';
 import relampagoImage from '../img/relampago.png';
 import terraImage from '../img/terra.png';
-import { Easing } from 'react-native-reanimated';
+import dado1 from '../img/dado1.jpeg'
+import dado2 from '../img/dado2.jpeg'
+import dado3 from '../img/dado3.jpeg'
+import dado4 from '../img/dado4.jpeg'
+import dado5 from '../img/dado5.jpeg'
+import dado6 from '../img/dado6.jpeg'
 export default function Jogo() {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
@@ -23,9 +27,12 @@ export default function Jogo() {
   const [sound, setSound] = useState();
   const [progressoTimeA, setProgressoTimeA] = useState(1.0); // 1.0 representa 100%
   const [progressoTimeB, setProgressoTimeB] = useState(1.0); // 1.0 representa 100%
-  const [resultadoDadoTimeA, setResultadoDadoTimeA] = useState(null);
-  const [resultadoDadoTimeB, setResultadoDadoTimeB] = useState(null);
+  const [resultadoDadoTimeA, setResultadoDadoTimeA] = useState(6);
+  const [resultadoDadoTimeB, setResultadoDadoTimeB] = useState(3);
   const [dadoRotation] = useState(new Animated.Value(0));
+  const [jogoAcabou, setJogoAcabou] = useState(false);
+  const [vencedor, setVencedor] = useState(null);
+
 
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 
@@ -49,10 +56,10 @@ export default function Jogo() {
   const resultadoParaImagem = {
     1: dado1,
     2: dado2,
-    3: null,
-    4: null,
-    5: null,
-    6: null
+    3: dado3,
+    4: dado4,
+    5: dado5,
+    6: dado6
   };
 
 
@@ -142,7 +149,7 @@ export default function Jogo() {
 
     Animated.timing(dadoRotation, {
       toValue: 360, // 360 graus para uma rotação completa
-      duration: 1000, // Duração da animação em milissegundos
+      duration: 700, // Duração da animação em milissegundos
       easing: Easing.linear, // Tipo de animação (linear para rotação uniforme)
     }).start(() => {
       // A animação foi concluída, você pode redefinir a rotação aqui se desejar.
@@ -154,12 +161,12 @@ export default function Jogo() {
       // Time A ataca
       const novoProgressoTimeB = progressoTimeB - 0.1; // Reduz o progresso em 10%
       setProgressoTimeB(novoProgressoTimeB);
-    } else if (resultadoDadoTimeA < resultadoDadoTimeB){
+    } else if (resultadoDadoTimeA < resultadoDadoTimeB) {
       // Time B ataca
       const novoProgressoTimeA = progressoTimeA - 0.1; // Reduz o progresso em 10%
       setProgressoTimeA(novoProgressoTimeA);
     }
-    else{
+    else {
       alert('Empate')
     }
   };
@@ -200,8 +207,8 @@ export default function Jogo() {
     setFaseSelecao('timeA');
     setProgressoTimeA(vidaInicial); // Use vidaInicial aqui
     setProgressoTimeB(vidaInicial); // Use vidaInicial aqui
-    setResultadoDadoTimeA(null);
-    setResultadoDadoTimeB(null);
+    setResultadoDadoTimeA(3);
+    setResultadoDadoTimeB(6);
   };
 
   useEffect(() => {
@@ -215,6 +222,19 @@ export default function Jogo() {
   const dadoImageStyle = {
     transform: [{ rotate: dadoRotation.interpolate({ inputRange: [0, 360], outputRange: ['0deg', '360deg'] }) }],
   };
+
+  useEffect(() => {
+    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+      if (progressoTimeA <= 0 && progressoTimeB > 0) {
+        setVencedor('Time B');
+      } else if (progressoTimeB <= 0 && progressoTimeA > 0) {
+        setVencedor('Time A');
+      } else {
+        setVencedor('Empate');
+      }
+      setJogoAcabou(true);
+    }
+  }, [progressoTimeA, progressoTimeB]);
 
 
   return (
@@ -294,7 +314,7 @@ export default function Jogo() {
               calcularDanoEAplicar();
             }}
           >
-            <Text style={{color: 'white'}}>ROLAR</Text>
+            <Text style={{ color: 'white' }}>ROLAR</Text>
           </TouchableOpacity>
 
           <Animated.Image
@@ -302,7 +322,7 @@ export default function Jogo() {
             style={[styles.dadoImage, dadoImageStyle]}
             useNativeDriver={true}
           />
-           <Text style={styles.textDados}>Time B</Text>
+          <Text style={styles.textDados}>Time B</Text>
 
         </View>
 
@@ -526,7 +546,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     width: 50, // Defina o tamanho desejado
     height: 50, // Defina o tamanho desejado
-    borderRadius: 20, // Define metade da largura/altura para criar um círculo
+    borderRadius: 7, // Define metade da largura/altura para criar um círculo
     backgroundColor: 'white', // Cor de fundo do dado
     borderWidth: 2, // Largura da borda
     borderColor: 'black', // Cor da borda
@@ -534,7 +554,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     transform: [{ scale: 0.7 }], // Reduzir o tamanho
     marginTop: 10,
-    marginBottom: 5
+    marginBottom: 5,
   },
   botaoDados: {
     backgroundColor: 'red',
