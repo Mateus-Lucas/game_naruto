@@ -10,23 +10,18 @@ import ventoImage from '../img/vento.png';
 import fogoImage from '../img/fogo.png';
 import relampagoImage from '../img/relampago.png';
 import terraImage from '../img/terra.png';
-
-
 export default function Jogo() {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
   const [timeACompleto, setTimeACompleto] = useState(false);
   const [timeBCompleto, setTimeBCompleto] = useState(false);
   const [faseSelecao, setFaseSelecao] = useState('timeA');
-  const [modalVisivel, setModalVisivel] = useState(true);
-  const [vida, setVida] = useState(25000);
-  const [progressoTimeA, setProgressoTimeA] = useState(0);
-  const progressoRef = useRef(null);
-  const [sound, setSound] = React.useState();
-  const [turno, setTurno] = useState('timeA');
-  const [dadoAtaque, setDadoAtaque] = useState(0);
-  const [dadoDefesa, setDadoDefesa] = useState(0);
-  const [danoCausado, setDanoCausado] = useState(0);
+  const [sound, setSound] = useState();
+  const [progressoTimeA, setProgressoTimeA] = useState(1.0); // 1.0 representa 100%
+  const [progressoTimeB, setProgressoTimeB] = useState(1.0); // 1.0 representa 100%
+  const [resultadoDadoTimeA, setResultadoDadoTimeA] = useState(null);
+  const [resultadoDadoTimeB, setResultadoDadoTimeB] = useState(null);
+
 
 
   const getChakraImage = (natureza) => {
@@ -48,35 +43,6 @@ export default function Jogo() {
 
   const verificarTimeCompleto = (time) => time.length === 3;
 
-  const lancarDados = () => {
-    const dadoAtaque = Math.floor(Math.random() * 6) + 1;
-    const dadoDefesa = Math.floor(Math.random() * 6) + 1;
-    setDadoAtaque(dadoAtaque);
-    setDadoDefesa(dadoDefesa);
-  };
-
-  const calcularDanoEAplicar = () => {
-    // Calcule o dano com base nos dados de ataque e defesa
-    const dano = dadoAtaque > dadoDefesa ? dadoAtaque - dadoDefesa : 0;
-
-    // Atualize a vida do time inimigo
-    const timeInimigo = turno === 'timeA' ? timeB : timeA;
-    const novoTimeInimigo = [...timeInimigo];
-    novoTimeInimigo.forEach((personagem) => {
-      if (personagem.vida > 0) {
-        personagem.vida -= dano;
-      }
-    });
-
-    // Atualize o dano causado
-    setDanoCausado(dano);
-
-    // Alterne o turno
-    setTurno(turno === 'timeA' ? 'timeB' : 'timeA');
-  };
-
-
-
   useEffect(() => {
     async function definirOrientacaoPaisagem() {
       await ScreenOrientation.lockAsync(ScreenOrientation.OrientationLock.LANDSCAPE);
@@ -90,34 +56,27 @@ export default function Jogo() {
   }, []);
 
   useEffect(() => {
+
     setTimeACompleto(verificarTimeCompleto(timeA));
     setTimeBCompleto(verificarTimeCompleto(timeB));
+
   }, [timeA, timeB]);
 
-  const gerarChave = (prefixo, personagem) => `${prefixo}_${personagem.id}`;
-
   const lidarComSelecaoDePersonagem = (personagem) => {
-    if (faseSelecao === 'completo') {
-      setModalVisivel(false);
-      return;
-    }
 
     if (faseSelecao === 'timeA' && timeA.length < 3) {
-      personagem.vida = 25000;
       setTimeA([...timeA, personagem]);
     } else if (faseSelecao === 'timeB' && timeB.length < 3) {
-      personagem.vida = 25000;
       setTimeB([...timeB, personagem]);
     }
 
     if (timeA.length === 3 && timeB.length === 3) {
-      setModalVisivel(false);
       setFaseSelecao('completo');
     } else if (faseSelecao === 'timeA' && timeA.length === 3) {
       setFaseSelecao('timeB');
     }
-  };
 
+  };
 
   async function playSound() {
     console.log('Loading Sound');
@@ -134,12 +93,12 @@ export default function Jogo() {
   }
 
   useEffect(() => {
-    playSound(); // Inicie a reprodução de música quando o componente for montado
+    playSound();
 
     return () => {
       if (sound) {
-        console.log('Unloading Sound');
-        sound.stopAsync(); // Pare o som antes de descarregá-lo
+        console.log('Parando som');
+        sound.stopAsync();
         sound.unloadAsync();
       }
     };
@@ -159,49 +118,72 @@ export default function Jogo() {
     return !timeA.includes(personagem) && !timeB.includes(personagem);
   });
 
-  const reiniciarSelecao = () => {
+  const lancarDados = () => {
+    const resultadoDadoTimeA = Math.floor(Math.random() * 6) + 1; // Gera um número inteiro entre 1 e 6
+    const resultadoDadoTimeB = Math.floor(Math.random() * 6) + 1; // Gera um número inteiro entre 1 e 6
+
+    setResultadoDadoTimeA(resultadoDadoTimeA);
+    setResultadoDadoTimeB(resultadoDadoTimeB);
+
+    if (resultadoDadoTimeA > resultadoDadoTimeB) {
+      // Time A ataca
+      const novoProgressoTimeB = progressoTimeB - 0.1; // Reduz o progresso em 10%
+      setProgressoTimeB(novoProgressoTimeB);
+    } else {
+      // Time B ataca
+      const novoProgressoTimeA = progressoTimeA - 0.1; // Reduz o progresso em 10%
+      setProgressoTimeA(novoProgressoTimeA);
+    }
+  };
+
+  const calcularDanoEAplicar = () => {
+    const dano = 0.05; // Valor do dano
+
+    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+      resetGame();
+    }
+
+    if (progressoTimeA <= 0) {
+      // Time A perdeu, aplique o dano apenas ao Time B
+      const novoProgressoTimeB = progressoTimeB - dano;
+      setProgressoTimeB(novoProgressoTimeB);
+
+      if (novoProgressoTimeB <= 0) {
+        // Time B também perdeu, reinicie o jogo
+        resetGame();
+      }
+    } else if (progressoTimeB <= 0) {
+      // Time B perdeu, aplique o dano apenas ao Time A
+      const novoProgressoTimeA = progressoTimeA - dano;
+      setProgressoTimeA(novoProgressoTimeA);
+
+      if (novoProgressoTimeA <= 0) {
+        // Time A também perdeu, reinicie o jogo
+        resetGame();
+      }
+    }
+  };
+
+  const vidaInicial = 1.0; // Altere para 1.0
+
+  const resetGame = () => {
     setTimeA([]);
     setTimeB([]);
     setFaseSelecao('timeA');
-  };
-
-  const fecharModal = () => {
-    setModalVisivel(false);
-  };
-
-
-  // Função para iniciar o progresso
-  const iniciarProgresso = () => {
-    if (progressoRef.current) {
-      clearInterval(progressoRef.current);
-    }
-
-    progressoRef.current = setInterval(() => {
-      if (progressoTimeA < 100) {
-        setProgressoTimeA(progressoTimeA + 1);
-      } else {
-        clearInterval(progressoRef.current);
-      }
-    }, 1000);
+    setProgressoTimeA(vidaInicial); // Use vidaInicial aqui
+    setProgressoTimeB(vidaInicial); // Use vidaInicial aqui
+    setResultadoDadoTimeA(null);
+    setResultadoDadoTimeB(null);
   };
 
   useEffect(() => {
-    if (timeACompleto) {
-      iniciarProgresso();
-    } else {
-      // Pausar o progresso se o Time A não estiver completo
-      if (progressoRef.current) {
-        clearInterval(progressoRef.current);
-      }
+    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+      setTimeout(() => {
+        resetGame();
+      }, 100); // Espere 100ms antes de redefinir o jogo
     }
-
-    return () => {
-      // Limpar o intervalo ao desmontar o componente
-      if (progressoRef.current) {
-        clearInterval(progressoRef.current);
-      }
-    };
-  }, [timeACompleto]);
+  }, [progressoTimeA, progressoTimeB]);
+  
 
   return (
     <View style={styles.container}>
@@ -213,7 +195,7 @@ export default function Jogo() {
               <FlatList
                 data={timeA}
                 horizontal={true}
-                keyExtractor={(item) => gerarChave('timeA', item)}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <Card style={styles.card}>
                     <Card style={{ backgroundColor: '#600000' }}>
@@ -248,11 +230,11 @@ export default function Jogo() {
                 )}
               />
               <View style={styles.containerProgressoTimeA}>
-                {timeA.map((personagem) => (
+                {timeA.map((personagem, index) => (
                   <View key={personagem.id}>
                     <Title style={styles.nomeTimeA}>{personagem.nome}</Title>
                     <ProgressBar
-                      progress={0.5} // Usar progresso de 0 a 100
+                      progress={progressoTimeA} // Usar progresso de 0 a 100
                       color={'green'}
                       style={styles.estiloProgressoA} // Inverter horizontalmente
 
@@ -266,16 +248,21 @@ export default function Jogo() {
 
         <View style={{ backgroundColor: 'red', width: '8%' }}>
 
-          <Text style={{color: 'blue'}}>Dado Time A: {dadoAtaque}</Text>
-          <Text style={{color: 'green'}}>Dado de Defesa: {dadoDefesa}</Text>
-          <Text>Dano Causado: {danoCausado}</Text>
           <TouchableOpacity
             title="Atacar"
             style={{ backgroundColor: 'blue' }}
             onPress={() => {
               lancarDados();
               calcularDanoEAplicar();
-            }} />
+            }}
+          >
+            <Text>Atacar</Text>
+          </TouchableOpacity>
+          <Text>Resultado Dado Time A: {resultadoDadoTimeA}</Text>
+          <Text>Resultado Dado Time B: {resultadoDadoTimeB}</Text>
+
+
+
         </View>
 
 
@@ -285,7 +272,7 @@ export default function Jogo() {
               <FlatList
                 data={timeB}
                 horizontal={true}
-                keyExtractor={(item) => gerarChave('timeB', item)}
+                keyExtractor={(item) => item.id.toString()}
                 renderItem={({ item }) => (
                   <Card style={styles.card}>
                     <Card style={{ backgroundColor: '#600000' }}>
@@ -319,11 +306,11 @@ export default function Jogo() {
                 )}
               />
               <View style={styles.containerProgressoTimeB}>
-                {timeB.map((personagem) => (
+                {timeB.map((personagem, index) => (
                   <View key={personagem.id}>
                     <Title style={styles.nomeTimeB}>{personagem.nome}</Title>
                     <ProgressBar
-                      progress={0.5}
+                      progress={progressoTimeB}
                       color={'green'}
                       style={[
                         styles.estiloProgressoB,
@@ -466,12 +453,12 @@ const styles = StyleSheet.create({
   },
   estiloProgressoA: {
     height: 5, // 50% da altura original (10)
-    width: 250, // 50% da largura original (500)
+    width: 330, // 50% da largura original (500)
     alignSelf: 'flex-start',
   },
   estiloProgressoB: {
     height: 5, // 50% da altura original (10)
-    width: 250, // 50% da largura original (500)
+    width: 330, // 50% da largura original (500)
     alignSelf: 'flex-end',
   },
   imageNat: {
