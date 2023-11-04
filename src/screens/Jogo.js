@@ -10,9 +10,6 @@ import ventoImage from '../img/vento.png';
 import fogoImage from '../img/fogo.png';
 import relampagoImage from '../img/relampago.png';
 import terraImage from '../img/terra.png';
-
-const vidaInicial = 25000;
-
 export default function Jogo() {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
@@ -124,10 +121,10 @@ export default function Jogo() {
   const lancarDados = () => {
     const resultadoDadoTimeA = Math.floor(Math.random() * 6) + 1; // Gera um número inteiro entre 1 e 6
     const resultadoDadoTimeB = Math.floor(Math.random() * 6) + 1; // Gera um número inteiro entre 1 e 6
-  
+
     setResultadoDadoTimeA(resultadoDadoTimeA);
     setResultadoDadoTimeB(resultadoDadoTimeB);
-  
+
     if (resultadoDadoTimeA > resultadoDadoTimeB) {
       // Time A ataca
       const novoProgressoTimeB = progressoTimeB - 0.1; // Reduz o progresso em 10%
@@ -138,27 +135,55 @@ export default function Jogo() {
       setProgressoTimeA(novoProgressoTimeA);
     }
   };
-  
 
   const calcularDanoEAplicar = () => {
     const dano = 0.05; // Valor do dano
-  
+
+    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+      resetGame();
+    }
+
     if (progressoTimeA <= 0) {
       // Time A perdeu, aplique o dano apenas ao Time B
       const novoProgressoTimeB = progressoTimeB - dano;
       setProgressoTimeB(novoProgressoTimeB);
+
+      if (novoProgressoTimeB <= 0) {
+        // Time B também perdeu, reinicie o jogo
+        resetGame();
+      }
     } else if (progressoTimeB <= 0) {
       // Time B perdeu, aplique o dano apenas ao Time A
       const novoProgressoTimeA = progressoTimeA - dano;
       setProgressoTimeA(novoProgressoTimeA);
-    } else {
-      // Ambos os times ainda têm progresso
-      // Não aplique dano a nenhum time neste caso
+
+      if (novoProgressoTimeA <= 0) {
+        // Time A também perdeu, reinicie o jogo
+        resetGame();
+      }
     }
   };
+
+  const vidaInicial = 1.0; // Altere para 1.0
+
+  const resetGame = () => {
+    setTimeA([]);
+    setTimeB([]);
+    setFaseSelecao('timeA');
+    setProgressoTimeA(vidaInicial); // Use vidaInicial aqui
+    setProgressoTimeB(vidaInicial); // Use vidaInicial aqui
+    setResultadoDadoTimeA(null);
+    setResultadoDadoTimeB(null);
+  };
+
+  useEffect(() => {
+    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+      setTimeout(() => {
+        resetGame();
+      }, 100); // Espere 100ms antes de redefinir o jogo
+    }
+  }, [progressoTimeA, progressoTimeB]);
   
-
-
 
   return (
     <View style={styles.container}>
