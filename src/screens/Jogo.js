@@ -1,11 +1,12 @@
-import React, { useEffect, useState, useRef } from 'react';
-import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, ImageBackground, Animated } from 'react-native';
-import { Card, Title, Paragraph, ProgressBar, Button } from 'react-native-paper';
+import React, { useEffect, useState } from 'react';
+import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, ImageBackground, Animated, Alert, ScrollView } from 'react-native';
+import { Card, Title, Paragraph, ProgressBar, Button, TextInput } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
 import Api from '../services/Api';
 import { LogBox } from 'react-native';
 import { Easing } from 'react-native-reanimated';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 import aguaImage from '../img/agua.png';
 import ventoImage from '../img/vento.png';
@@ -32,6 +33,16 @@ export default function Jogo() {
   const [dadoRotation] = useState(new Animated.Value(0));
   const [jogoAcabou, setJogoAcabou] = useState(false);
   const [vencedor, setVencedor] = useState(null);
+  const [nomeJogadorA, setNomeJogadorA] = useState('');
+  const [nomeJogadorB, setNomeJogadorB] = useState('');
+  const [placarVisivel, setPlacarVisivel] = useState(false);
+  const [placar, setPlacar] = useState([]);
+  const [nomeModalVisivel, setNomeModalVisivel] = useState(true);
+  const [vitoriasJogadorA, setVitoriasJogadorA] = useState(0);
+  const [vitoriasJogadorB, setVitoriasJogadorB] = useState(0);
+
+
+
 
 
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -61,7 +72,6 @@ export default function Jogo() {
     5: dado5,
     6: dado6
   };
-
 
   const verificarTimeCompleto = (time) => time.length === 3;
 
@@ -209,6 +219,8 @@ export default function Jogo() {
     setProgressoTimeB(vidaInicial); // Use vidaInicial aqui
     setResultadoDadoTimeA(3);
     setResultadoDadoTimeB(6);
+    solicitarNomesDosJogadores();
+
   };
 
   useEffect(() => {
@@ -227,15 +239,135 @@ export default function Jogo() {
     if (progressoTimeA <= 0 || progressoTimeB <= 0) {
       if (progressoTimeA <= 0 && progressoTimeB > 0) {
         setVencedor('Time B');
+        setVitoriasJogadorB(vitoriasJogadorB + 1); // Incrementa as vitórias do jogador B
+        registrarVitoria(nomeJogadorB); // Registrar a vitória do jogador B
       } else if (progressoTimeB <= 0 && progressoTimeA > 0) {
         setVencedor('Time A');
+        setVitoriasJogadorA(vitoriasJogadorA + 1); // Incrementa as vitórias do jogador A
+        registrarVitoria(nomeJogadorA); // Registrar a vitória do jogador A
       } else {
         setVencedor('Empate');
       }
-      setJogoAcabou(true);
+      
+      setPlacarVisivel(true); // Abre o modal do placar
+      obterPlacar(); // Atualiza o placar
     }
   }, [progressoTimeA, progressoTimeB]);
 
+
+  const registrarVitoria = async (nomeJogador) => {
+    try {
+      const vitoriasAnteriores = await AsyncStorage.getItem('vitorias_' + nomeJogador) || '0'; // Se não houver valor, inicie com '0'
+      const vitoriasAnterioresInt = parseInt(vitoriasAnteriores, 10);
+      const novasVitorias = vitoriasAnterioresInt + 1;
+      await AsyncStorage.setItem('vitorias_' + nomeJogador, novasVitorias.toString());
+    } catch (error) {
+      console.error('Erro ao registrar vitória:', error);
+    }
+  };
+  
+  
+  const obterPlacar = async () => {
+    try {
+      const chaves = await AsyncStorage.getAllKeys();
+      const placar = await AsyncStorage.multiGet(chaves);
+  
+      // Mapeia os valores corretamente
+      const placarMapeado = placar.map((item) => {
+        const nomeJogador = item[0].replace('vitorias_', '');
+        const vitorias = parseInt(item[1], 10);
+        return { nomeJogador, vitorias };
+      });
+  
+      // Ordena o placar em ordem decrescente com base no número de vitórias
+      placarMapeado.sort((a, b) => b.vitorias - a.vitorias);
+  
+      setPlacar(placarMapeado);
+    } catch (error) {
+      console.error('Erro ao obter placar:', error);
+    }
+  };
+  
+  const solicitarNomesDosJogadores = async () => {
+    // Verifica se os nomes dos jogadores já foram salvos
+    const jogadorASalvo = await AsyncStorage.getItem('nomeJogadorA');
+    const jogadorBSalvo = await AsyncStorage.getItem('nomeJogadorB');
+  
+    if (jogadorASalvo && jogadorBSalvo) {
+      // Nomes dos jogadores já foram salvos, exibe um aviso
+      Alert.alert(
+        'Nomes Recuperados',
+        `Nomes dos jogadores recuperados:\nJogador A: ${jogadorASalvo}\nJogador B: ${jogadorBSalvo}`,
+      );
+  
+      // Atualiza o nome dos jogadores
+      setNomeJogadorA(jogadorASalvo);
+      setNomeJogadorB(jogadorBSalvo);
+  
+      console.log('Nome do Jogador A:', jogadorASalvo);
+      console.log('Nome do Jogador B:', jogadorBSalvo);
+  
+      // Atualiza as vitórias dos jogadores se necessário
+      const vitoriasA = await AsyncStorage.getItem('vitorias_' + jogadorASalvo);
+      const vitoriasB = await AsyncStorage.getItem('vitorias_' + jogadorBSalvo);
+      if (vitoriasA) {
+        setVitoriasJogadorA(parseInt(vitoriasA));
+      }
+      if (vitoriasB) {
+        setVitoriasJogadorB(parseInt(vitoriasB));
+      }
+    } else {
+      // Nomes dos jogadores não foram salvos, solicita que os jogadores digitem seus nomes
+      Alert.prompt('Digite o nome do Jogador A', '', (nome) => {
+        if (nome) {
+          setNomeJogadorA(nome);
+          AsyncStorage.setItem('nomeJogadorA', nome); // Salva o nome no AsyncStorage
+        }
+      });
+  
+      Alert.prompt('Digite o nome do Jogador B', '', (nome) => {
+        if (nome) {
+          setNomeJogadorB(nome);
+          AsyncStorage.setItem('nomeJogadorB', nome); // Salva o nome no AsyncStorage
+        }
+      });
+    }
+  };
+  
+
+
+  const iniciarJogo = () => {
+
+    const vitoriasJogadorA = AsyncStorage.getItem('vitorias_' + nomeJogadorA);
+    if (vitoriasJogadorA !== null) {
+      // Nome do Jogador A já existe no ranking, incrementa suas vitórias
+      const novasVitorias = parseInt(vitoriasJogadorA, 10) + 1;
+      AsyncStorage.setItem('vitorias_' + nomeJogadorA, novasVitorias.toString());
+    }
+
+    // Verifica se o nome do Jogador B já está no ranking
+    const vitoriasJogadorB = AsyncStorage.getItem('vitorias_' + nomeJogadorB);
+    if (vitoriasJogadorB !== null) {
+      // Nome do Jogador B já existe no ranking, incrementa suas vitórias
+      const novasVitorias = parseInt(vitoriasJogadorB, 10) + 1;
+      AsyncStorage.setItem('vitorias_' + nomeJogadorB, novasVitorias.toString());
+    }
+
+    resetGame(); // Reinicia o jogo com os nomes dos jogadores
+  };
+
+  const salvarNomes = async () => {
+    if (nomeJogadorA && nomeJogadorB) {
+      // Verifica se ambos os nomes dos jogadores foram preenchidos
+      await AsyncStorage.setItem('nomeJogadorA', nomeJogadorA);
+      await AsyncStorage.setItem('nomeJogadorB', nomeJogadorB);
+      setNomeModalVisivel(false); // Fecha o modal de nomes
+      iniciarJogo(); // Inicia o jogo
+    } else {
+      // Exibe uma mensagem de erro se algum dos nomes não estiver preenchido
+      Alert.alert('Erro', 'Preencha os nomes dos jogadores antes de salvar.');
+    }
+  };
 
   return (
     <View style={styles.container}>
@@ -299,7 +431,7 @@ export default function Jogo() {
         </View>
 
         <View style={{ marginTop: 25 }}>
-
+          <Button onPress={() => setPlacarVisivel(true)}>Ver Placar</Button>
           <Text style={styles.textDados}>Time A</Text>
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeA]}
@@ -316,7 +448,6 @@ export default function Jogo() {
           >
             <Text style={{ color: 'white' }}>ROLAR</Text>
           </TouchableOpacity>
-
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeB]}
             style={[styles.dadoImage, dadoImageStyle]}
@@ -404,6 +535,50 @@ export default function Jogo() {
             </View>
           </View>
         </Modal>
+        <Modal visible={placarVisivel} animationType="slide" transparent={true}>
+          <View style={styles.containerModal}>
+            <View style={styles.conteudoModal}>
+              <Title style={[styles.tituloModal, styles.textoNaruto]}>Placar de Vitórias</Title>
+              <ScrollView>
+                {placar.map((item, index) => (
+                  <View style={styles.placarItem} key={index}>
+                    <Text style={[styles.placarPosicao, styles.textoNaruto]}>{index + 1}º</Text>
+                    <Text style={[styles.placarNome, styles.textoNaruto]}>{item.nomeJogador}</Text>
+                    <Text style={[styles.placarVitorias, styles.textoNaruto]}>{item.vitorias}</Text>
+                  </View>
+                ))}
+              </ScrollView>
+              <Button onPress={() => setPlacarVisivel(false)} style={styles.botaoFechar}>
+                Fechar
+              </Button>
+            </View>
+          </View>
+        </Modal>
+
+
+
+        <Modal visible={nomeModalVisivel} transparent={true}>
+          <View style={styles.containerModal}>
+            <View style={styles.conteudoModal}>
+              <Title style={styles.tituloModal}>Nomes dos Jogadores</Title>
+              <TextInput
+                placeholder="Nome do Jogador A"
+                value={nomeJogadorA}
+                onChangeText={(text) => setNomeJogadorA(text)}
+                style={styles.inputNome}
+              />
+              <TextInput
+                placeholder="Nome do Jogador B"
+                value={nomeJogadorB}
+                onChangeText={(text) => setNomeJogadorB(text)}
+                style={styles.inputNome}
+              />
+              <Button title="Salvar Nomes" onPress={() => salvarNomes()} />
+            </View>
+          </View>
+        </Modal>
+
+
       </ImageBackground>
     </View>
   );
@@ -573,6 +748,39 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     color: 'white',
-  }
+  },
+  containerModal: {
+    flex: 1,
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  conteudoModal: {
+    backgroundColor: 'white', // Cor de fundo do modal
+    padding: 16,
+    borderRadius: 8,
+  },
+  tituloModal: {
+    fontSize: 24,
+    marginBottom: 16,
+  },
+  placarItem: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginBottom: 8,
+  },
+  placarPosicao: {
+    fontWeight: 'bold',
+    marginRight: 8,
+  },
+  placarNome: {
+    flex: 1,
+  },
+  textoNaruto: {
+    color: 'orange',
+  },
+  botaoFechar: {
+    backgroundColor: 'red', // Cor de fundo do botão Fechar
+    marginTop: 16,
+  },
 });
 
