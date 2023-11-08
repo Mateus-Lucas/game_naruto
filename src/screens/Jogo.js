@@ -3,7 +3,7 @@ import { View, StyleSheet, Modal, Text, TouchableOpacity, FlatList, Image, Image
 import { Card, Title, Paragraph, ProgressBar, Button, TextInput } from 'react-native-paper';
 import { Audio } from 'expo-av';
 import * as ScreenOrientation from 'expo-screen-orientation';
-import Api from '../services/Api';
+import Personagens from '../services/ApiPersonagens';
 import { LogBox } from 'react-native';
 import { Easing } from 'react-native-reanimated';
 import AsyncStorage from '@react-native-async-storage/async-storage';
@@ -146,7 +146,7 @@ export default function Jogo() {
     }
   };
 
-  const personagensDisponiveis = Api.filter((personagem) => {
+  const personagensDisponiveis = Personagens.filter((personagem) => {
     return !timeA.includes(personagem) && !timeB.includes(personagem);
   });
 

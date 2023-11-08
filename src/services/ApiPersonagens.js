@@ -1,4 +1,4 @@
-const Api = [
+const ApiPersonagens = [
     {
         "nome": "Naruto Uzumaki",
         "clã": "Uzumaki",
@@ -652,6 +652,4 @@ const Api = [
 
 ]
 
-
-
-export default Api;
+export default ApiPersonagens;

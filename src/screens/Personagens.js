@@ -1,7 +1,7 @@
 import React from 'react';
 import { FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Card } from 'react-native-paper';
-import Api from '../services/Api';
+import ApiPersonagens from '../services/ApiPersonagens';
 import { useNavigation } from '@react-navigation/native';
 
 export default function Personagens() {
@@ -13,7 +13,7 @@ export default function Personagens() {
 
   return (
     <FlatList
-      data={Api}
+      data={ApiPersonagens}
       keyExtractor={(item) => item.id.toString()}
       contentContainerStyle={styles.container}
       numColumns={2}
