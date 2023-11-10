@@ -19,7 +19,7 @@ import dado3 from '../img/dado3.jpeg'
 import dado4 from '../img/dado4.jpeg'
 import dado5 from '../img/dado5.jpeg'
 import dado6 from '../img/dado6.jpeg'
-export default function Jogo() {
+export default function Jogo(props) {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
   const [timeACompleto, setTimeACompleto] = useState(false);
@@ -41,9 +41,7 @@ export default function Jogo() {
   const [vitoriasJogadorA, setVitoriasJogadorA] = useState(0);
   const [vitoriasJogadorB, setVitoriasJogadorB] = useState(0);
 
-
-
-
+  const navigation = props.navigation
 
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 
@@ -457,6 +455,14 @@ export default function Jogo() {
 
         </View>
 
+        <View style={styles.container}>
+            <Button
+                onPress={() => navigation.navigate('Home')}
+            >
+                Início 
+            </Button>
+        </View>
+  
 
         <View style={styles.containerTimeB}>
           {timeBCompleto && (

@@ -1,14 +1,31 @@
-// import TabRoutes from './TabRoutes';
+import { NavigationContainer } from '@react-navigation/native';
+import Personagens from '../screens/Personagens';
+import Aldeias from '../screens/Aldeias';
+import InicioJogo from '../screens/InicioJogo';
+import { createStackNavigator } from '@react-navigation/stack'
+import Jogo from '../screens/Jogo';
+import Home from '../screens/Home';
 
-// const Drawer = createDrawerNavigator();
+export default function Router() {
 
-// export default function Routes() {
-//     return (
-//         <NavigationContainer>
-//             <Drawer.Navigator initialRouteName='Inicio'>
-//                 <Drawer.Screen name='Inicio' component={TabRoutes} />
-//                 <Drawer.Screen name='Login' component={Login}/>
-//             </Drawer.Navigator>
-//         </NavigationContainer>
-//     )
-// }
+    const Stack = createStackNavigator();
+
+    return (
+        <NavigationContainer>
+            <Stack.Navigator
+                initialRouteName='Home'
+                screenOptions={{
+                    headerShown: false, // Oculta o cabeçalho por padrão
+                }}
+            >
+                <Stack.Screen name='Home' component={Home} />
+                <Stack.Screen name='Jogo' component={Jogo} />
+                <Stack.Screen name='Personagens' component={Personagens} />
+                <Stack.Screen name='Aldeias' component={Aldeias} />
+                <Stack.Screen name='InicioJogo' component={InicioJogo} />
+            </Stack.Navigator>
+        </NavigationContainer>
+    );
+}
+
+

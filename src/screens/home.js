@@ -1,9 +1,27 @@
+import { StyleSheet, Text, View } from 'react-native'
 import React from 'react'
+import { Button } from 'react-native-paper'
 
-function home() {
-  return (
-    <div>Pagina inicial do jogo</div>
-  )
+export default function Home(props) {
+
+    const navigation = props.navigation
+
+    return (
+        <View style={styles.container}>
+            <Button
+                onPress={() => navigation.navigate('Jogo')}
+            >
+                Jogo
+            </Button>
+        </View>
+    )
 }
 
-export default home
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'red'
+    }
+})
