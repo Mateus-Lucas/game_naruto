@@ -3,7 +3,7 @@ import React from 'react'
 import ApiAldeias from '../services/ApiAldeias'
 import { Button, Card, Paragraph, Title } from 'react-native-paper';
 
-export default function Aldeias() {
+export default function Aldeias({navigation}) {
   return (
     <View style={styles.container}>
       <Text style={styles.title}>Aldeias</Text>
@@ -18,7 +18,7 @@ export default function Aldeias() {
               {/* <Paragraph>{item.descricao}</Paragraph> */}
             </Card.Content>
             <Card.Actions>
-              <Button>Ver mais</Button>
+              <Button onPress={() => navigation.navigate('Aldeia', { aldeia: item })}>Ver mais</Button>
             </Card.Actions>
           </Card>
         )}

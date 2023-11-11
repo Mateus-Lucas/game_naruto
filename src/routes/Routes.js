@@ -4,7 +4,8 @@ import Aldeias from '../screens/Aldeias';
 import InicioJogo from '../screens/InicioJogo';
 import { createStackNavigator } from '@react-navigation/stack'
 import Jogo from '../screens/Jogo';
-import Home from '../screens/Home';
+import Home from '../screens/home';
+import Aldeia from '../screens/Aldeia';
 
 export default function Router() {
 
@@ -23,6 +24,7 @@ export default function Router() {
                 <Stack.Screen name='Personagens' component={Personagens} />
                 <Stack.Screen name='Aldeias' component={Aldeias} />
                 <Stack.Screen name='InicioJogo' component={InicioJogo} />
+                <Stack.Screen name='Aldeia' component={Aldeia} />
             </Stack.Navigator>
         </NavigationContainer>
     );

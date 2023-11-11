@@ -13,6 +13,11 @@ export default function Home(props) {
             >
                 Jogo
             </Button>
+            <Button
+                onPress={() => navigation.navigate('Aldeias')}
+            >
+                Aldeias
+            </Button>
         </View>
     )
 }
