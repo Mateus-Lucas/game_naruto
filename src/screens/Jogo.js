@@ -429,7 +429,7 @@ export default function Jogo(props) {
         </View>
 
         <View style={{ marginTop: 25 }}>
-          <Button onPress={() => setPlacarVisivel(true)}>Ver Placar</Button>
+          <Button onPress={() => setPlacarVisivel(true)} style={{ marginTop: -30, borderColor: 'black', borderWidth: 3 }}>Ver Placar</Button>
           <Text style={styles.textDados}>Time A</Text>
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeA]}
@@ -444,7 +444,7 @@ export default function Jogo(props) {
               calcularDanoEAplicar();
             }}
           >
-            <Text style={{ color: 'white' }}>ROLAR</Text>
+            <Text style={{ color: 'white', textAlign: 'center' }}>ROLAR</Text>
           </TouchableOpacity>
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeB]}
@@ -456,11 +456,7 @@ export default function Jogo(props) {
         </View>
 
         <View style={styles.container}>
-            <Button
-                onPress={() => navigation.navigate('Home')}
-            >
-                Início 
-            </Button>
+            <Button onPress={() => navigation.navigate('Home')} style={{ marginLeft: 140, marginVertical: -4, borderColor: 'black', borderWidth: 3 }}> Início </Button>
         </View>
   
 
@@ -723,8 +719,8 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   dadoImage: {
-    top: '-5%', // Centraliza verticalmente no meio do card
-    left: '170%', // Centraliza horizontalmente no meio do card
+    top: '4%', // Centraliza verticalmente no meio do card
+    left: '165%', // Centraliza horizontalmente no meio do card
     transform: [{ translateX: 300 }, { translateY: 100 }], // Ajusta o posicionamento para centralizar
     width: 50, // Defina o tamanho desejado
     height: 50, // Defina o tamanho desejado
@@ -736,8 +732,8 @@ const styles = StyleSheet.create({
     transform: [{ scale: 0.7 }], // Reduzir o tamanho
   },
   botaoDados: {
-    top: '-6%', // Centraliza verticalmente no meio do card
-    left: '160%', // Centraliza horizontalmente no meio do card
+    top: '3%', // Centraliza verticalmente no meio do card
+    left: '145%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     marginTop: 5,
     padding: 5,
@@ -747,8 +743,8 @@ const styles = StyleSheet.create({
     textColor: 'white'
   },
   textDados: {
-    top: '-5%', // Centraliza verticalmente no meio do card
-    left: '155%', // Centraliza horizontalmente no meio do card
+    top: '4%', // Centraliza verticalmente no meio do card
+    left: '145%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     padding: 3,
     borderRadius: 5,
@@ -756,6 +752,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     color: 'white',
+    textAlign: 'center',
   },
   containerModal: {
     flex: 1,
