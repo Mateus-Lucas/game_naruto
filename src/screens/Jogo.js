@@ -723,8 +723,9 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   dadoImage: {
-    alignSelf: 'center',
-    alignItems: 'center',
+    top: '-5%', // Centraliza verticalmente no meio do card
+    left: '170%', // Centraliza horizontalmente no meio do card
+    transform: [{ translateX: 300 }, { translateY: 100 }], // Ajusta o posicionamento para centralizar
     width: 50, // Defina o tamanho desejado
     height: 50, // Defina o tamanho desejado
     borderRadius: 7, // Define metade da largura/altura para criar um círculo
@@ -732,12 +733,11 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Largura da borda
     borderColor: 'black', // Cor da borda
     justifyContent: 'center', // Para centralizar o conteúdo (número)
-    alignItems: 'center',
     transform: [{ scale: 0.7 }], // Reduzir o tamanho
-    marginTop: 10,
-    marginBottom: 5,
   },
   botaoDados: {
+    top: '-6%', // Centraliza verticalmente no meio do card
+    left: '160%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     marginTop: 5,
     padding: 5,
@@ -747,6 +747,8 @@ const styles = StyleSheet.create({
     textColor: 'white'
   },
   textDados: {
+    top: '-5%', // Centraliza verticalmente no meio do card
+    left: '155%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     padding: 3,
     borderRadius: 5,

@@ -14,7 +14,7 @@ export default function Router() {
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName='Home'
+                initialRouteName='Jogo'
                 screenOptions={{
                     headerShown: false, // Oculta o cabeçalho por padrão
                 }}
