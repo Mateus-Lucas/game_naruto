@@ -19,7 +19,7 @@ import dado3 from '../img/dado3.jpeg'
 import dado4 from '../img/dado4.jpeg'
 import dado5 from '../img/dado5.jpeg'
 import dado6 from '../img/dado6.jpeg'
-export default function Jogo() {
+export default function Jogo(props) {
   const [timeA, setTimeA] = useState([]);
   const [timeB, setTimeB] = useState([]);
   const [timeACompleto, setTimeACompleto] = useState(false);
@@ -41,9 +41,7 @@ export default function Jogo() {
   const [vitoriasJogadorA, setVitoriasJogadorA] = useState(0);
   const [vitoriasJogadorB, setVitoriasJogadorB] = useState(0);
 
-
-
-
+  const navigation = props.navigation
 
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
 
@@ -431,7 +429,7 @@ export default function Jogo() {
         </View>
 
         <View style={{ marginTop: 25 }}>
-          <Button onPress={() => setPlacarVisivel(true)}>Ver Placar</Button>
+          <Button onPress={() => setPlacarVisivel(true)} style={{ marginTop: -30, borderColor: 'black', borderWidth: 3 }}>Ver Placar</Button>
           <Text style={styles.textDados}>Time A</Text>
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeA]}
@@ -446,7 +444,7 @@ export default function Jogo() {
               calcularDanoEAplicar();
             }}
           >
-            <Text style={{ color: 'white' }}>ROLAR</Text>
+            <Text style={{ color: 'white', textAlign: 'center' }}>ROLAR</Text>
           </TouchableOpacity>
           <Animated.Image
             source={resultadoParaImagem[resultadoDadoTimeB]}
@@ -457,6 +455,10 @@ export default function Jogo() {
 
         </View>
 
+        <View style={styles.container}>
+            <Button onPress={() => navigation.navigate('Home')} style={{ marginLeft: 140, marginVertical: -4, borderColor: 'black', borderWidth: 3 }}> Início </Button>
+        </View>
+  
 
         <View style={styles.containerTimeB}>
           {timeBCompleto && (
@@ -717,8 +719,9 @@ const styles = StyleSheet.create({
     fontSize: 13
   },
   dadoImage: {
-    alignSelf: 'center',
-    alignItems: 'center',
+    top: '4%', // Centraliza verticalmente no meio do card
+    left: '165%', // Centraliza horizontalmente no meio do card
+    transform: [{ translateX: 300 }, { translateY: 100 }], // Ajusta o posicionamento para centralizar
     width: 50, // Defina o tamanho desejado
     height: 50, // Defina o tamanho desejado
     borderRadius: 7, // Define metade da largura/altura para criar um círculo
@@ -726,12 +729,11 @@ const styles = StyleSheet.create({
     borderWidth: 2, // Largura da borda
     borderColor: 'black', // Cor da borda
     justifyContent: 'center', // Para centralizar o conteúdo (número)
-    alignItems: 'center',
     transform: [{ scale: 0.7 }], // Reduzir o tamanho
-    marginTop: 10,
-    marginBottom: 5,
   },
   botaoDados: {
+    top: '3%', // Centraliza verticalmente no meio do card
+    left: '145%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     marginTop: 5,
     padding: 5,
@@ -741,6 +743,8 @@ const styles = StyleSheet.create({
     textColor: 'white'
   },
   textDados: {
+    top: '4%', // Centraliza verticalmente no meio do card
+    left: '145%', // Centraliza horizontalmente no meio do card
     backgroundColor: 'red',
     padding: 3,
     borderRadius: 5,
@@ -748,6 +752,7 @@ const styles = StyleSheet.create({
     borderWidth: 2,
     borderColor: 'black',
     color: 'white',
+    textAlign: 'center',
   },
   containerModal: {
     flex: 1,
