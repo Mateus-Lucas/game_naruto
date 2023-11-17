@@ -353,7 +353,7 @@ const ApiPersonagens = [
     {
         "nome": "Hidan",
         "clã": "Akatsuki",
-        "aldeia": "fontes termais",
+        "aldeia": "pedra",
         "jutsu_especial": "Jashin",
         "dano_especial": 960,
         "natureza_de_chacra": "água",
@@ -405,7 +405,7 @@ const ApiPersonagens = [
     {
         "nome": "Utakata",
         "clã": "Kirigakure",
-        "aldeia": "sem aldeia",
+        "aldeia": "névoa",
         "jutsu_especial": "lacuna de sanguessuga",
         "dano_especial": 960,
         "natureza_de_chacra": "água",
@@ -483,7 +483,7 @@ const ApiPersonagens = [
     {
         "nome": "Kabuto",
         "clã": "Yakushi",
-        "aldeia": "sem aldeia",
+        "aldeia": "som",
         "jutsu_especial": " Técnica do Extremo Branco",
         "dano_especial": 960,
         "natureza_de_chacra": "vento",
@@ -509,7 +509,7 @@ const ApiPersonagens = [
     {
         "nome": "Madara",
         "clã": "Uchira",
-        "aldeia": "sem aldeia",
+        "aldeia": "folha",
         "jutsu_especial": "Chibaku tensei",
         "dano_especial": 960,
         "natureza_de_chacra": "fogo",
