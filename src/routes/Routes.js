@@ -4,8 +4,8 @@ import Aldeias from '../screens/Aldeias';
 import InicioJogo from '../screens/InicioJogo';
 import { createStackNavigator } from '@react-navigation/stack'
 import Jogo from '../screens/Jogo';
-import Home from '../screens/home';
 import Aldeia from '../screens/Aldeia';
+import Home from '../screens/Home';
 
 export default function Router() {
 
@@ -14,7 +14,7 @@ export default function Router() {
     return (
         <NavigationContainer>
             <Stack.Navigator
-                initialRouteName='Jogo'
+                initialRouteName='Home'
                 screenOptions={{
                     headerShown: false, // Oculta o cabeçalho por padrão
                 }}
