@@ -5,7 +5,7 @@ import InicioJogo from '../screens/InicioJogo';
 import { createStackNavigator } from '@react-navigation/stack'
 import Jogo from '../screens/Jogo';
 import Aldeia from '../screens/Aldeia';
-import Home from '../screens/Home';
+import Home from '../screens/home';
 
 export default function Router() {
 
