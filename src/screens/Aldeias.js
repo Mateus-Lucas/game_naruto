@@ -5,7 +5,10 @@ import { PieChart } from 'react-native-chart-kit';
 import ApiAldeias from '../services/ApiAldeias';
 import ApiPersonagens from '../services/ApiPersonagens';
 
-export default function Aldeias() {
+export default function Aldeias(props) {
+
+  const navigation = props.navigation
+
   const [personagensPorAldeia, setPersonagensPorAldeia] = useState({});
 
   useEffect(() => {
@@ -46,7 +49,7 @@ export default function Aldeias() {
               <Paragraph>{`Quantidade de Personagens: ${personagensPorAldeia[item.aldeia] || 0}`}</Paragraph>
             </Card.Content>
             <Card.Actions>
-              <Button>Ver mais</Button>
+            <Button onPress={() => navigation.navigate('Aldeia', { aldeia: item })}>Ver mais</Button>
             </Card.Actions>
           </Card>
         )}

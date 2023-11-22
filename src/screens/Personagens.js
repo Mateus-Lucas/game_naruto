@@ -2,10 +2,11 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Card, Searchbar } from 'react-native-paper';
 import ApiPersonagens from '../services/ApiPersonagens';
-import { useNavigation } from '@react-navigation/native';
 
-export default function Personagens() {
-  const navigation = useNavigation();
+export default function Personagens(props) {
+
+  const navigation = props.navigation
+
   const [searchQuery, setSearchQuery] = useState('');
   const [dadosFiltrados, setDadosFiltrados] = useState(ApiPersonagens);
 
@@ -16,10 +17,6 @@ export default function Personagens() {
     );
     setDadosFiltrados(resultadosPesquisa);
   }, [searchQuery]);
-
-  const handleSelectCharacter = (selectedCharacter) => {
-    navigation.navigate('Jogo', { ids: [selectedCharacter.id] });
-  };
 
   return (
     <>
@@ -43,10 +40,10 @@ export default function Personagens() {
               <Text style={styles.cardDescription}>Clã: {item.clã}</Text>
               <Text style={styles.cardDescription}>Patente: {item.patente}</Text>
               <Button
-                mode="contained"
-                title="Selecionar"
-                onPress={() => handleSelectCharacter(item)}
-              />
+                onPress={() => navigation.navigate('Personagem', { personagem: item })}
+                title='Ver mais'
+              >
+              </Button>
             </Card.Content>
           </Card>
         )}
