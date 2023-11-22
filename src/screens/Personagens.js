@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { FlatList, StyleSheet, Text, Button } from 'react-native';
 import { Card, Searchbar } from 'react-native-paper';
 import ApiPersonagens from '../services/ApiPersonagens';
+import { ImageBackground } from 'react-native';
 
 export default function Personagens(props) {
 
@@ -19,50 +20,58 @@ export default function Personagens(props) {
   }, [searchQuery]);
 
   return (
-    <>
-      <Searchbar
-        placeholder="Pesquisar por letra inicial"
-        onChangeText={(query) => setSearchQuery(query)}
-        value={searchQuery}
-        style={styles.searchBar}
-      />
+      <ImageBackground
+        source={require('../img/images.jpg')}
+        style={styles.backgroundImage}
+      >
 
-      <FlatList
-        data={dadosFiltrados}
-        keyExtractor={(item) => item.id.toString()}
-        contentContainerStyle={styles.container}
-        numColumns={2}
-        renderItem={({ item }) => (
-          <Card style={styles.card}>
-            <Card.Cover source={{ uri: item.imagem }} style={styles.cardImage} />
-            <Card.Content>
-              <Text style={styles.cardTitle}>{item.nome}</Text>
-              <Text style={styles.cardDescription}>Clã: {item.clã}</Text>
-              <Text style={styles.cardDescription}>Patente: {item.patente}</Text>
-              <Button
-                onPress={() => navigation.navigate('Personagem', { personagem: item })}
-                title='Ver mais'
-              >
-              </Button>
-            </Card.Content>
-          </Card>
-        )}
-      />
-    </>
+        <Searchbar
+          placeholder="Pesquisar por letra inicial"
+          onChangeText={(query) => setSearchQuery(query)}
+          value={searchQuery}
+          style={styles.searchBar}
+        />
+
+        <FlatList
+          data={dadosFiltrados}
+          keyExtractor={(item) => item.id.toString()}
+          contentContainerStyle={styles.container}
+          numColumns={2}
+          renderItem={({ item }) => (
+            <Card style={styles.card}>
+              <Card.Cover source={{ uri: item.imagem }} style={styles.cardImage} />
+              <Card.Content>
+                <Text style={styles.cardTitle}>{item.nome}</Text>
+                <Text style={styles.cardDescription}>Clã: {item.clã}</Text>
+                <Text style={styles.cardDescription}>Patente: {item.patente}</Text>
+                <Button
+                  onPress={() => navigation.navigate('Personagem', { personagem: item })}
+                  title='Selecionar'
+                >
+                </Button>
+              </Card.Content>
+            </Card>
+          )}
+        />
+      </ImageBackground>
   );
 }
 
 const styles = StyleSheet.create({
+  backgroundImage: {
+    flex: 1,
+    resizeMode: 'cover',
+    justifyContent: 'center',
+},
   container: {
     padding: 16,
-    backgroundColor: '#fff',
   },
   card: {
     margin: 8,
     flex: 0.5,
     elevation: 4,
     borderWidth: 6,
-    borderColor: '#DAA520',
+    borderColor: 'black',
     backgroundColor: 'white',
     borderRadius: 0,
   },
@@ -77,7 +86,7 @@ const styles = StyleSheet.create({
   },
   cardDescription: {
     fontSize: 16,
-    color: 'gray',
+    color: 'black',
   },
   searchBar: {
     margin: 8,
