@@ -140,7 +140,6 @@ export default function Jogo() {
       setProgressoTimeA(novoProgressoTimeA);
     }
     else {
-      alert('Empate')
     }
   };
 
@@ -196,18 +195,18 @@ export default function Jogo() {
     transform: [{ rotate: dadoRotation.interpolate({ inputRange: [0, 360], outputRange: ['0deg', '360deg'] }) }],
   };
 
-  useEffect(() => {
-    if (progressoTimeA <= 0 || progressoTimeB <= 0) {
-      if (progressoTimeA <= 0 && progressoTimeB > 0) {
-        setVencedor('Time B');
-      } else if (progressoTimeB <= 0 && progressoTimeA > 0) {
-        setVencedor('Time A');
-      } else {
-        setVencedor('Empate');
-      }
-      setJogoAcabou(true);
-    }
-  }, [progressoTimeA, progressoTimeB]);
+  // useEffect(() => {
+  //   if (progressoTimeA <= 0 || progressoTimeB <= 0) {
+  //     if (progressoTimeA <= 0 && progressoTimeB > 0) {
+  //       setVencedor('Time B');
+  //     } else if (progressoTimeB <= 0 && progressoTimeA > 0) {
+  //       setVencedor('Time A');
+  //     } else {
+  //       setVencedor('Empate');
+  //     }
+  //     setJogoAcabou(true);
+  //   }
+  // }, [progressoTimeA, progressoTimeB]);
 
 
   return (
