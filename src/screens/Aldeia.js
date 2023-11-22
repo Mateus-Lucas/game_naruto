@@ -39,6 +39,7 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '90%',
     justifyContent: 'center',
-    height: '90%'
+    height: '90%',
+    marginTop: 50
   },
 })

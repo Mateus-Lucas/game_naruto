@@ -6,6 +6,7 @@ import { createStackNavigator } from '@react-navigation/stack'
 import Jogo from '../screens/Jogo';
 import Aldeia from '../screens/Aldeia';
 import Home from '../screens/Home';
+import Personagem from '../screens/Personagem';
 
 export default function Router() {
 
