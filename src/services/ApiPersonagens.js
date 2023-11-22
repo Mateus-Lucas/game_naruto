@@ -649,6 +649,7 @@ const ApiPersonagens = [
         "imagem": "https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTNkQQTOwy0B1fJBQ_r1j5W6wW3bfPqFKdnyg&usqp=CAU",
         "id": 50
     },
+    
 
 ]
 
