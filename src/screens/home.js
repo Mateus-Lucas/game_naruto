@@ -1,5 +1,5 @@
 import React from 'react';
-import { StyleSheet, View } from 'react-native';
+import { StyleSheet, View, ImageBackground } from 'react-native';
 import { ScrollView } from 'react-native-gesture-handler';
 import { Button, Card, Title, Paragraph } from 'react-native-paper';
 import Icon from 'react-native-vector-icons/MaterialCommunityIcons';
@@ -12,7 +12,11 @@ export default function Home(props) {
     };
 
     return (
-        <View style={styles.container}>
+        <ImageBackground
+            source={require('../img/images.jpg')}
+            style={styles.backgroundImage}
+        >
+            <ScrollView contentContainerStyle={styles.container}>
                 <Card style={styles.card} onPress={() => navigateToDetails('Personagens')}>
                     <Card.Content>
                         <Title>Personagens</Title>
@@ -20,10 +24,10 @@ export default function Home(props) {
                             source={require('../img/personagens.jpg')}
                             style={styles.cardImage}
                         />
-                        <Button
+                        <Button textColor='black'
                             onPress={() => navigateToDetails('Personagens')}
                             icon={({ size, color }) => (
-                                <Icon name="information" size={size} color={color} />
+                                <Icon name="account-supervisor" size={size} color={'black'} />
                             )}
                         >Saber Mais</Button>
                     </Card.Content>
@@ -36,10 +40,10 @@ export default function Home(props) {
                             source={require('../img/aldeias.jpg')}
                             style={styles.cardImage}
                         />
-                        <Button
+                        <Button textColor='black'
                             onPress={() => navigateToDetails('Aldeias')}
                             icon={({ size, color }) => (
-                                <Icon name="information" size={size} color={color} />
+                                <Icon name="globe-model" size={size} color={'black'} />
                             )}
                         >Saber Mais</Button>
                     </Card.Content>
@@ -52,41 +56,45 @@ export default function Home(props) {
                             source={require('../img/jogo.png')}
                             style={styles.cardImage}
                         />
-                        <Button
+                        <Button textColor='black'
                             onPress={() => navigateToDetails('Jogo')}
                             icon={({ size, color }) => (
-                                <Icon name="information" size={size} color={color} />
+                                <Icon name="gamepad-variant" size={size} color={'black'} />
                             )}
                         >
-                            Saber Mais
+                            Iniciar Jogo
                         </Button>
                     </Card.Content>
                 </Card>
-
-        </View>
+            </ScrollView>
+        </ImageBackground>
     );
 }
 
 const styles = StyleSheet.create({
-    container: {
+    backgroundImage: {
         flex: 1,
-        backgroundColor: '#f0f0f0',
+        resizeMode: 'cover',
+        justifyContent: 'center',
+    },
+    container: {
+        flexGrow: 1,
         alignItems: 'center',
         justifyContent: 'center',
-        padding: 30
+        padding: 30,
     },
     card: {
         width: '100%',
-        backgroundColor: '#fff',
+        backgroundColor: 'rgba(255,255,255,0.7)',  // Adjust the alpha value to control the background opacity
         marginVertical: 5,
         borderWidth: 3,
-        borderColor: 'black'
+        borderColor: 'black',
     },
     cardImage: {
         height: 130,
         resizeMode: 'cover',
         borderWidth: 3,
         borderColor: 'black',
-        borderRadius: 0
+        borderRadius: 0,
     },
 });
