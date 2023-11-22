@@ -47,6 +47,7 @@ export default function Personagens(props) {
                 <Button
                   onPress={() => navigation.navigate('Personagem', { personagem: item })}
                   title='Selecionar'
+                  color={'orange'}
                 >
                 </Button>
               </Card.Content>

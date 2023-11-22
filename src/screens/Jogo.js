@@ -31,6 +31,8 @@ export default function Jogo() {
   const [dadoRotation] = useState(new Animated.Value(0));
   const [jogoAcabou, setJogoAcabou] = useState(false);
   const [vencedor, setVencedor] = useState(null);
+  const [listaVisivel, setListaVisivel] = useState(true);
+
 
 
   LogBox.ignoreLogs(['Animated: `useNativeDriver`']);
@@ -84,20 +86,25 @@ export default function Jogo() {
   }, [timeA, timeB]);
 
   const lidarComSelecaoDePersonagem = (personagem) => {
-
     if (faseSelecao === 'timeA' && timeA.length < 3) {
       setTimeA([...timeA, personagem]);
     } else if (faseSelecao === 'timeB' && timeB.length < 3) {
       setTimeB([...timeB, personagem]);
     }
-
+  
+    // Verifica se ambos os times selecionaram 3 personagens
     if (timeA.length === 3 && timeB.length === 3) {
       setFaseSelecao('completo');
-    } else if (faseSelecao === 'timeA' && timeA.length === 3) {
-      setFaseSelecao('timeB');
+      setListaVisivel(false);
+    } else {
+      // Se não, verifica se o timeA concluiu a seleção para passar ao timeB
+      if (faseSelecao === 'timeA' && timeA.length === 3) {
+        setFaseSelecao('timeB');
+      }
     }
-
   };
+  
+  
 
   const obterMensagemDeSelecao = () => {
     if (timeA.length < 3) {
@@ -181,6 +188,7 @@ export default function Jogo() {
     setProgressoTimeB(vidaInicial); // Use vidaInicial aqui
     setResultadoDadoTimeA(3);
     setResultadoDadoTimeB(6);
+    setListaVisivel(true);
   };
 
   useEffect(() => {
@@ -357,7 +365,7 @@ export default function Jogo() {
           )}
         </View>
 
-        <Modal visible={faseSelecao !== 'completo'} animationType="slide" transparent={true}>
+        <Modal visible={faseSelecao !== 'completo' && listaVisivel} animationType="slide" transparent={true}>
           <View style={styles.containerModal}>
             <View style={styles.conteudoModal}>
               <Title style={styles.tituloModal}>{obterMensagemDeSelecao()}</Title>
